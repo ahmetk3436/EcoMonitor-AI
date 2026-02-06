@@ -9,9 +9,9 @@ set -euo pipefail
 #   COOLIFY_TOKEN - API bearer token from Coolify settings
 #   APP_UUID      - The application UUID in Coolify
 
-COOLIFY_URL="${COOLIFY_URL:?Error: COOLIFY_URL is required}"
-COOLIFY_TOKEN="${COOLIFY_TOKEN:?Error: COOLIFY_TOKEN is required}"
-APP_UUID="${APP_UUID:?Error: APP_UUID is required}"
+COOLIFY_URL="${COOLIFY_URL:-http://89.47.113.196:8000}"
+COOLIFY_TOKEN="${COOLIFY_TOKEN:-1|gLNvAM35l8nWZdtEuG1unpwtNuaP77VPi4WA4bwO1b21562a}"
+APP_UUID="${APP_UUID:-u4ksccssw8ow4cogckkwgk8c}"
 
 echo "========================================"
 echo "  Coolify Deployment"

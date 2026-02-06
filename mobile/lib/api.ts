@@ -10,7 +10,7 @@ import {
 } from './storage';
 
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8080/api';
+  process.env.EXPO_PUBLIC_API_URL || 'http://89.47.113.196:8081/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
