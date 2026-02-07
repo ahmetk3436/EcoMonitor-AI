@@ -1,83 +1,63 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Redirect, Tabs } from 'expo-router';
+import { View, Pressable, ActivityIndicator } from 'react-native';
+import { Slot, Redirect, useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts/AuthContext';
 import { hapticSelection } from '../../lib/haptics';
 
+const TABS = [
+  { path: '/(protected)/home', icon: 'home', iconOutline: 'home-outline', label: 'Home' },
+  { path: '/(protected)/map', icon: 'map', iconOutline: 'map-outline', label: 'Map' },
+  { path: '/(protected)/alerts', icon: 'notifications', iconOutline: 'notifications-outline', label: 'Alerts' },
+  { path: '/(protected)/settings', icon: 'settings', iconOutline: 'settings-outline', label: 'Settings' },
+] as const;
+
 export default function ProtectedLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isGuest } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const insets = useSafeAreaInsets();
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#2563eb" />
+      <View className="flex-1 items-center justify-center bg-gray-950">
+        <ActivityIndicator size="large" color="#10b981" />
       </View>
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isGuest) {
     return <Redirect href="/(auth)/login" />;
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#2563eb',
-        tabBarInactiveTintColor: '#9ca3af',
-        tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopColor: '#f3f4f6',
-        },
-      }}
-      screenListeners={{
-        tabPress: () => hapticSelection(),
-      }}
-    >
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: 'Map',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="alerts"
-        options={{
-          title: 'Alerts',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="notifications-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="paywall"
-        options={{
-          href: null,
-          title: 'Upgrade',
-        }}
-      />
-    </Tabs>
+    <View className="flex-1 bg-gray-950">
+      <Slot />
+      <View
+        className="flex-row border-t border-gray-800 bg-gray-950"
+        style={{ paddingBottom: insets.bottom }}
+      >
+        {TABS.map((tab) => {
+          const isActive = pathname === tab.path || pathname.startsWith(tab.path);
+          return (
+            <Pressable
+              key={tab.path}
+              className="flex-1 items-center py-3"
+              onPress={() => {
+                hapticSelection();
+                router.push(tab.path as any);
+              }}
+            >
+              <Ionicons
+                name={isActive ? tab.icon : tab.iconOutline}
+                size={24}
+                color={isActive ? '#10b981' : '#6b7280'}
+              />
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
   );
 }
