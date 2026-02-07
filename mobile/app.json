@@ -1,20 +1,34 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "EcoMonitor AI",
+    "slug": "ecomonitor-ai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "appfactory",
     "userInterfaceStyle": "light",
+    "owner": "ahmetcoskunkizilkaya",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ahmetcoskunkizilkaya.ecomonitorai",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "EcoMonitor AI needs your location to track environmental changes in your area.",
+        "NSCameraUsageDescription": "EcoMonitor AI uses the camera to capture environmental observations.",
+        "NSPhotoLibraryUsageDescription": "EcoMonitor AI accesses your photo library to attach images to environmental reports."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -37,6 +51,11 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "FILL_IN"
+      }
+    }
   }
 }

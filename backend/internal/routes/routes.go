@@ -19,8 +19,13 @@ func Setup(
 	coordinateHandler *handlers.CoordinateHandler,
 	satelliteHandler *handlers.SatelliteHandler,
 	historyHandler *handlers.HistoryHandler,
+	legalHandler *handlers.LegalHandler,
 ) {
 	api := app.Group("/api")
+
+	// Legal pages (public, required for App Store)
+	api.Get("/privacy-policy", legalHandler.PrivacyPolicy)
+	api.Get("/terms", legalHandler.TermsOfService)
 
 	// Health
 	api.Get("/health", healthHandler.Check)
