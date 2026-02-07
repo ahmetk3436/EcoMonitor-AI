@@ -3,16 +3,21 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, router } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import api from '../../lib/api';
-import { hapticSuccess } from '../../lib/haptics';
+import { hapticSuccess, hapticError, hapticLight } from '../../lib/haptics';
 import { useSubscription } from '../../contexts/SubscriptionContext';
-import { SatelliteAlert, ChangeType, AnalyzeResponse } from '../../types/satellite';
+import { useAuth } from '../../contexts/AuthContext';
+import { shareAlert, shareAnalysisSummary } from '../../lib/share';
+import Skeleton from '../../components/ui/Skeleton';
+import type { SatelliteAlert, ChangeType } from '../../types/satellite';
 
 const CHANGE_ICONS: Record<ChangeType, keyof typeof Ionicons.glyphMap> = {
   construction: 'hammer',
@@ -21,25 +26,38 @@ const CHANGE_ICONS: Record<ChangeType, keyof typeof Ionicons.glyphMap> = {
   urban_expansion: 'business',
 };
 
+const CHANGE_BORDER_COLORS: Record<string, string> = {
+  construction: '#f59e0b',
+  vegetation_loss: '#ef4444',
+  water_change: '#3b82f6',
+  urban_expansion: '#8b5cf6',
+};
+
 const getConfidenceColor = (confidence: number) => {
-  if (confidence > 80) return '#dc2626';
-  if (confidence > 50) return '#f97316';
-  return '#16a34a';
+  if (confidence > 0.8) return '#ef4444';
+  if (confidence > 0.5) return '#f97316';
+  return '#10b981';
 };
 
 export default function AlertsScreen() {
   const { isSubscribed } = useSubscription();
+  const { isGuest, canUseFeature, incrementGuestUsage } = useAuth();
+  const router = useRouter();
   const [alerts, setAlerts] = useState<SatelliteAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [analyzingId, setAnalyzingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchAlerts = async () => {
     try {
-      const { data } = await api.get<SatelliteAlert[]>('/satellite/alerts');
-      setAlerts(data);
-    } catch (error) {
-      console.error('Failed to fetch alerts:', error);
+      setError(null);
+      const { data } = await api.get('/alerts');
+      setAlerts(data?.alerts || []);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Failed to load alerts. Please try again.';
+      setError(msg);
+      hapticError();
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -49,7 +67,7 @@ export default function AlertsScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchAlerts();
-    }, []),
+    }, [])
   );
 
   const handleRefresh = () => {
@@ -58,86 +76,182 @@ export default function AlertsScreen() {
   };
 
   const handleAnalyze = async (coordinateId: string) => {
-    if (!isSubscribed) {
-      router.push('/(protected)/paywall');
+    // Guest check
+    if (isGuest && !canUseFeature()) {
+      Alert.alert(
+        'Free Limit Reached',
+        'Create an account to continue analyzing locations',
+        [
+          { text: 'Sign Up', onPress: () => router.push('/(auth)/register') },
+          { text: 'Cancel', style: 'cancel' },
+        ]
+      );
       return;
     }
+
+    if (!isSubscribed && !isGuest) {
+      router.push('/(protected)/paywall' as any);
+      return;
+    }
+
     setAnalyzingId(coordinateId);
     try {
-      const { data } = await api.post<AnalyzeResponse>(
-        `/coordinates/${coordinateId}/analyze`,
-      );
-      if (data.success) {
-        hapticSuccess();
-        fetchAlerts();
+      await api.post(`/coordinates/${coordinateId}/analyze`);
+      if (isGuest) {
+        await incrementGuestUsage();
       }
-    } catch (error) {
-      console.error('Analysis failed:', error);
+      hapticSuccess();
+      await fetchAlerts();
+      Alert.alert('Analysis Complete', 'Share your findings?', [
+        {
+          text: 'Share',
+          onPress: () =>
+            shareAnalysisSummary('Location', alerts.length, 75),
+        },
+        { text: 'Later', style: 'cancel' },
+      ]);
+    } catch {
+      hapticError();
+      Alert.alert('Error', 'Analysis failed. Please try again.');
     } finally {
       setAnalyzingId(null);
     }
   };
 
-  const renderAlertItem = ({ item }: { item: SatelliteAlert }) => (
-    <View className="bg-white rounded-xl p-4 mb-3 mx-4 border border-gray-200">
-      <View className="flex-row items-center justify-between mb-2">
-        <View className="flex-row items-center">
-          <Ionicons
-            name={CHANGE_ICONS[item.changeType] ?? 'alert-circle'}
-            size={24}
-            color="#4b5563"
-          />
-          <Text className="ml-2 text-lg font-semibold text-gray-900">
-            {item.changeType.replace('_', ' ')}
+  const renderAlertItem = ({ item }: { item: SatelliteAlert }) => {
+    const changeLabel = item.changeType
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+    const confidencePercent = Math.round(item.confidence * 100);
+    const borderColor = CHANGE_BORDER_COLORS[item.changeType] || '#374151';
+
+    return (
+      <View
+        className="rounded-2xl p-4 mb-3 mx-4"
+        style={{
+          backgroundColor: '#111827',
+          borderWidth: 1,
+          borderColor: '#1f2937',
+          borderLeftWidth: 4,
+          borderLeftColor: borderColor,
+        }}
+      >
+        <View className="flex-row items-center justify-between mb-2">
+          <View className="flex-row items-center">
+            <Ionicons
+              name={CHANGE_ICONS[item.changeType] ?? 'alert-circle'}
+              size={24}
+              color={borderColor}
+            />
+            <Text className="ml-2 text-lg font-semibold text-white">
+              {changeLabel}
+            </Text>
+          </View>
+          <Text
+            style={{ color: getConfidenceColor(item.confidence) }}
+            className="text-lg font-bold"
+          >
+            {confidencePercent}%
           </Text>
         </View>
-        <Text
-          style={{ color: getConfidenceColor(item.confidence) }}
-          className="text-lg font-bold"
-        >
-          {item.confidence}%
+
+        <View className="flex-row items-center mb-1">
+          <Ionicons name="location-outline" size={16} color="#6b7280" />
+          <Text className="text-gray-400 ml-1">{item.coordinates?.label || 'Unknown'}</Text>
+        </View>
+
+        <Text className="text-gray-500 text-sm mb-2">
+          Detected: {new Date(item.detectedAt).toLocaleDateString()}
         </Text>
+
+        <Text className="text-gray-300 mb-4">{item.summary}</Text>
+
+        <View className="flex-row">
+          <Pressable
+            className="flex-1 py-2.5 rounded-xl flex-row items-center justify-center mr-2"
+            style={{
+              backgroundColor: '#10b981',
+              opacity: analyzingId === item.coordinateId ? 0.7 : 1,
+            }}
+            onPress={() => handleAnalyze(item.coordinateId)}
+            disabled={analyzingId === item.coordinateId}
+          >
+            {analyzingId === item.coordinateId ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <>
+                <Ionicons name="analytics-outline" size={18} color="white" />
+                <Text className="text-white font-semibold ml-2">Analyze</Text>
+              </>
+            )}
+          </Pressable>
+          <Pressable
+            className="flex-row items-center justify-center rounded-xl py-2.5 px-4"
+            style={{ backgroundColor: '#1f2937' }}
+            onPress={() => {
+              hapticLight();
+              shareAlert(item);
+            }}
+          >
+            <Ionicons name="share-outline" size={18} color="#9ca3af" />
+            <Text className="text-gray-400 font-medium ml-2">Share</Text>
+          </Pressable>
+        </View>
       </View>
-
-      <View className="flex-row items-center mb-1">
-        <Ionicons name="location-outline" size={16} color="#6b7280" />
-        <Text className="text-gray-600 ml-1">{item.coordinates.label}</Text>
-      </View>
-
-      <Text className="text-gray-400 text-sm mb-2">
-        Detected: {new Date(item.detectedAt).toLocaleDateString()}
-      </Text>
-
-      <Text className="text-gray-700 mb-4">{item.summary}</Text>
-
-      <TouchableOpacity
-        className="bg-blue-600 py-2.5 rounded-lg flex-row items-center justify-center"
-        style={analyzingId === item.coordinateId ? { opacity: 0.7 } : undefined}
-        onPress={() => handleAnalyze(item.coordinateId)}
-        disabled={analyzingId === item.coordinateId}
-      >
-        {analyzingId === item.coordinateId ? (
-          <ActivityIndicator color="white" size="small" />
-        ) : (
-          <>
-            <Ionicons name="analytics-outline" size={20} color="white" />
-            <Text className="text-white font-semibold ml-2">Analyze</Text>
-          </>
-        )}
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-50">
-        <ActivityIndicator size="large" color="#2563eb" />
-      </View>
+      <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
+        <View className="px-6 pt-6 pb-4 border-b" style={{ borderBottomColor: '#1f2937' }}>
+          <Text className="text-3xl font-bold text-white">Alerts</Text>
+          <Text className="text-sm text-gray-400 mt-1">Environmental change detection</Text>
+        </View>
+        <View className="px-4 pt-4">
+          {[0, 1, 2, 3].map((i) => (
+            <View key={i} style={{ marginBottom: 12 }}>
+              <Skeleton width="100%" height={160} borderRadius={16} />
+            </View>
+          ))}
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
+        <View className="px-6 pt-6 pb-4 border-b" style={{ borderBottomColor: '#1f2937' }}>
+          <Text className="text-3xl font-bold text-white">Alerts</Text>
+          <Text className="text-sm text-gray-400 mt-1">Environmental change detection</Text>
+        </View>
+        <View className="flex-1 justify-center items-center px-8">
+          <Ionicons name="cloud-offline-outline" size={64} color="#ef4444" />
+          <Text className="text-lg font-semibold text-white mt-4">Failed to load alerts</Text>
+          <Text className="text-sm text-gray-400 mt-2 text-center">{error}</Text>
+          <Pressable
+            className="rounded-2xl px-8 py-3 mt-6"
+            style={{ backgroundColor: '#10b981' }}
+            onPress={() => {
+              setError(null);
+              setLoading(true);
+              fetchAlerts();
+            }}
+          >
+            <Text className="text-white font-semibold">Retry</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
+      <View className="px-6 pt-6 pb-4 border-b" style={{ borderBottomColor: '#1f2937' }}>
+        <Text className="text-3xl font-bold text-white">Alerts</Text>
+        <Text className="text-sm text-gray-400 mt-1">Environmental change detection</Text>
+      </View>
       <FlatList
         data={alerts}
         renderItem={renderAlertItem}
@@ -147,17 +261,27 @@ export default function AlertsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={['#2563eb']}
-            tintColor="#2563eb"
+            tintColor="#10b981"
           />
         }
         ListEmptyComponent={
-          <View className="flex-1 justify-center items-center mt-20">
-            <Ionicons name="notifications-off-outline" size={64} color="#9ca3af" />
-            <Text className="text-gray-400 text-lg mt-4">No alerts found</Text>
+          <View className="flex-1 justify-center items-center px-8 mt-20">
+            <Ionicons name="earth-outline" size={80} color="#374151" />
+            <Text className="text-xl font-semibold text-white mt-6">No Alerts Yet</Text>
+            <Text className="text-base text-gray-400 mt-2 text-center">
+              Add locations on the map and run satellite analysis to receive environmental change alerts
+            </Text>
+            <Pressable
+              className="rounded-2xl px-8 py-3 mt-6 flex-row items-center"
+              style={{ backgroundColor: '#10b981' }}
+              onPress={() => router.push('/(protected)/map' as any)}
+            >
+              <Ionicons name="map-outline" size={20} color="white" />
+              <Text className="text-white font-semibold ml-2">Go to Map</Text>
+            </Pressable>
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }

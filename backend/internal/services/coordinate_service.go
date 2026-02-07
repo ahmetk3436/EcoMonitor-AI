@@ -100,6 +100,101 @@ func (s *CoordinateService) GetCoordinate(id uuid.UUID) (*dto.CoordinateResponse
 	return mapCoordinateToResponse(&coordinate), nil
 }
 
+func (s *CoordinateService) UpdateCoordinate(id, userID uuid.UUID, req *dto.UpdateCoordinateRequest) (*dto.CoordinateResponse, error) {
+	updates := map[string]interface{}{}
+
+	if req.Latitude != nil {
+		if *req.Latitude < -90 || *req.Latitude > 90 {
+			return nil, ErrInvalidLatitude
+		}
+		updates["latitude"] = *req.Latitude
+	}
+	if req.Longitude != nil {
+		if *req.Longitude < -180 || *req.Longitude > 180 {
+			return nil, ErrInvalidLongitude
+		}
+		updates["longitude"] = *req.Longitude
+	}
+	if req.Label != nil {
+		trimmed := strings.TrimSpace(*req.Label)
+		if trimmed == "" {
+			return nil, ErrLabelRequired
+		}
+		if len(trimmed) > 255 {
+			return nil, ErrLabelTooLong
+		}
+		updates["label"] = trimmed
+	}
+	if req.Description != nil {
+		if len(*req.Description) > 500 {
+			return nil, ErrDescriptionTooLong
+		}
+		updates["description"] = *req.Description
+	}
+
+	if len(updates) == 0 {
+		// No fields to update, just return the existing coordinate
+		return s.GetCoordinate(id)
+	}
+
+	result := s.db.Model(&models.Coordinate{}).Where("id = ? AND user_id = ?", id, userID).Updates(updates)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrCoordinateNotFound
+	}
+
+	var coordinate models.Coordinate
+	if err := s.db.First(&coordinate, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return mapCoordinateToResponse(&coordinate), nil
+}
+
+func (s *CoordinateService) ListCoordinatesWithSearch(userID uuid.UUID, page, limit int, search string) (*dto.CoordinatesListResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 100 {
+		limit = 20
+	}
+
+	offset := (page - 1) * limit
+
+	var coordinates []models.Coordinate
+	var total int64
+
+	query := s.db.Model(&models.Coordinate{}).Where("user_id = ?", userID)
+	if search != "" {
+		searchLower := "%" + strings.ToLower(search) + "%"
+		query = query.Where("(LOWER(label) LIKE ? OR LOWER(description) LIKE ?)", searchLower, searchLower)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, err
+	}
+
+	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&coordinates).Error; err != nil {
+		return nil, err
+	}
+
+	response := &dto.CoordinatesListResponse{
+		Coordinates: make([]dto.CoordinateResponse, len(coordinates)),
+		Total:       total,
+		Page:        page,
+		Limit:       limit,
+		TotalPages:  int(math.Ceil(float64(total) / float64(limit))),
+	}
+
+	for i, coord := range coordinates {
+		response.Coordinates[i] = *mapCoordinateToResponse(&coord)
+	}
+
+	return response, nil
+}
+
 func (s *CoordinateService) DeleteCoordinate(id, userID uuid.UUID) error {
 	result := s.db.Where("id = ? AND user_id = ?", id, userID).Delete(&models.Coordinate{})
 	if result.Error != nil {

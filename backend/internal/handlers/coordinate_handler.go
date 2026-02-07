@@ -62,8 +62,14 @@ func (h *CoordinateHandler) ListCoordinates(c *fiber.Ctx) error {
 
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	limit, _ := strconv.Atoi(c.Query("limit", "20"))
+	search := c.Query("search", "")
 
-	coords, err := h.coordinateService.ListCoordinates(userID, page, limit)
+	var coords *dto.CoordinatesListResponse
+	if search != "" {
+		coords, err = h.coordinateService.ListCoordinatesWithSearch(userID, page, limit, search)
+	} else {
+		coords, err = h.coordinateService.ListCoordinates(userID, page, limit)
+	}
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
 			Error: true, Message: "Failed to fetch coordinates",
@@ -71,6 +77,53 @@ func (h *CoordinateHandler) ListCoordinates(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(coords)
+}
+
+func (h *CoordinateHandler) UpdateCoordinate(c *fiber.Ctx) error {
+	userID, err := extractUserID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(dto.ErrorResponse{
+			Error: true, Message: "Unauthorized",
+		})
+	}
+
+	idStr := c.Params("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+			Error: true, Message: "Invalid coordinate ID",
+		})
+	}
+
+	var req dto.UpdateCoordinateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+			Error: true, Message: "Invalid request body",
+		})
+	}
+
+	coord, err := h.coordinateService.UpdateCoordinate(id, userID, &req)
+	if err != nil {
+		if errors.Is(err, services.ErrCoordinateNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(dto.ErrorResponse{
+				Error: true, Message: err.Error(),
+			})
+		}
+		if errors.Is(err, services.ErrInvalidLatitude) ||
+			errors.Is(err, services.ErrInvalidLongitude) ||
+			errors.Is(err, services.ErrLabelRequired) ||
+			errors.Is(err, services.ErrLabelTooLong) ||
+			errors.Is(err, services.ErrDescriptionTooLong) {
+			return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+				Error: true, Message: err.Error(),
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
+			Error: true, Message: "Failed to update coordinate",
+		})
+	}
+
+	return c.JSON(coord)
 }
 
 func (h *CoordinateHandler) GetCoordinate(c *fiber.Ctx) error {

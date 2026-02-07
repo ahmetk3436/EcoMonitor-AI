@@ -5,22 +5,26 @@ import (
 	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/handlers"
 	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/middleware"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func Setup(
 	app *fiber.App,
 	cfg *config.Config,
+	db *gorm.DB,
 	authHandler *handlers.AuthHandler,
 	healthHandler *handlers.HealthHandler,
 	webhookHandler *handlers.WebhookHandler,
 	moderationHandler *handlers.ModerationHandler,
 	coordinateHandler *handlers.CoordinateHandler,
 	satelliteHandler *handlers.SatelliteHandler,
+	historyHandler *handlers.HistoryHandler,
 ) {
 	api := app.Group("/api")
 
 	// Health
 	api.Get("/health", healthHandler.Check)
+	api.Get("/env", healthHandler.GetEnvironment)
 
 	// Auth (public)
 	auth := api.Group("/auth")
@@ -43,6 +47,7 @@ func Setup(
 	protected.Post("/coordinates", coordinateHandler.CreateCoordinate)
 	protected.Get("/coordinates", coordinateHandler.ListCoordinates)
 	protected.Get("/coordinates/:id", coordinateHandler.GetCoordinate)
+	protected.Put("/coordinates/:id", coordinateHandler.UpdateCoordinate)
 	protected.Delete("/coordinates/:id", coordinateHandler.DeleteCoordinate)
 
 	// Satellite data (protected)
@@ -50,9 +55,11 @@ func Setup(
 	protected.Get("/coordinates/:id/satellite", satelliteHandler.GetAnalysisForCoordinate)
 	protected.Get("/alerts", satelliteHandler.GetLatestAlerts)
 
-	// Admin moderation panel (protected + admin check)
-	// In production, add an admin role middleware here
-	admin := api.Group("/admin", middleware.JWTProtected(cfg))
+	// History (protected)
+	protected.Get("/history", historyHandler.GetHistory)
+
+	// Admin moderation panel (protected + admin role check)
+	admin := api.Group("/admin", middleware.JWTProtected(cfg), middleware.AdminRequired(db))
 	admin.Get("/moderation/reports", moderationHandler.ListReports)
 	admin.Put("/moderation/reports/:id", moderationHandler.ActionReport)
 

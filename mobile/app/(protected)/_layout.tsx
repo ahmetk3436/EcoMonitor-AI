@@ -10,8 +10,12 @@ const TABS = [
   { path: '/(protected)/home', icon: 'home', iconOutline: 'home-outline', label: 'Home' },
   { path: '/(protected)/map', icon: 'map', iconOutline: 'map-outline', label: 'Map' },
   { path: '/(protected)/alerts', icon: 'notifications', iconOutline: 'notifications-outline', label: 'Alerts' },
+  { path: '/(protected)/history', icon: 'time', iconOutline: 'time-outline', label: 'History' },
   { path: '/(protected)/settings', icon: 'settings', iconOutline: 'settings-outline', label: 'Settings' },
 ] as const;
+
+// Screens that are navigable but not shown in the tab bar
+const HIDDEN_ROUTES = ['/(protected)/paywall', '/(protected)/coordinate-detail'];
 
 export default function ProtectedLayout() {
   const { isAuthenticated, isLoading, isGuest } = useAuth();
@@ -31,6 +35,9 @@ export default function ProtectedLayout() {
     return <Redirect href="/(auth)/login" />;
   }
 
+  // Check if current route is a hidden route (don't highlight any tab)
+  const isHiddenRoute = HIDDEN_ROUTES.some((r) => pathname.startsWith(r));
+
   return (
     <View className="flex-1 bg-gray-950">
       <Slot />
@@ -39,7 +46,7 @@ export default function ProtectedLayout() {
         style={{ paddingBottom: insets.bottom }}
       >
         {TABS.map((tab) => {
-          const isActive = pathname === tab.path || pathname.startsWith(tab.path);
+          const isActive = !isHiddenRoute && (pathname === tab.path || pathname.startsWith(tab.path));
           return (
             <Pressable
               key={tab.path}
@@ -50,7 +57,7 @@ export default function ProtectedLayout() {
               }}
             >
               <Ionicons
-                name={isActive ? tab.icon : tab.iconOutline}
+                name={(isActive ? tab.icon : tab.iconOutline) as any}
                 size={24}
                 color={isActive ? '#10b981' : '#6b7280'}
               />

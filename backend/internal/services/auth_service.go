@@ -54,6 +54,7 @@ func (s *AuthService) Register(req *dto.RegisterRequest) (*dto.AuthResponse, err
 		ID:       uuid.New(),
 		Email:    req.Email,
 		Password: string(hash),
+		Role:     "user",
 	}
 
 	if err := s.db.Create(&user).Error; err != nil {
@@ -217,6 +218,7 @@ func (s *AuthService) generateTokenPair(user *models.User) (*dto.AuthResponse, e
 		User: dto.UserResponse{
 			ID:    user.ID,
 			Email: user.Email,
+			Role:  user.Role,
 		},
 	}, nil
 }

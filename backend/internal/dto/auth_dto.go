@@ -29,6 +29,7 @@ type AuthResponse struct {
 type UserResponse struct {
 	ID    uuid.UUID `json:"id"`
 	Email string    `json:"email"`
+	Role  string    `json:"role"`
 }
 
 type ErrorResponse struct {

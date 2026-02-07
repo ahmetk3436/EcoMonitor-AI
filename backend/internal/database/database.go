@@ -43,6 +43,7 @@ func Migrate() error {
 		&models.Block{},
 		&models.Coordinate{},
 		&models.SatelliteData{},
+		&models.AnalysisHistory{},
 	)
 	if err != nil {
 		return fmt.Errorf("failed to run migrations: %w", err)
