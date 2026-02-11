@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, type TextInputProps } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  type TextInputProps,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,56 +14,75 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
 import { cn } from '../../lib/cn';
-import { hapticLight } from '../../lib/haptics';
+import { hapticLight, hapticSelection } from '../../lib/haptics';
 
-const AnimatedView = Animated.createAnimatedComponent(View);
-
-interface InputProps extends TextInputProps {
+interface EnhancedInputProps extends TextInputProps {
   label?: string;
   error?: string;
   success?: boolean;
-  helperText?: string;
-  showPasswordToggle?: boolean;
-  leftIcon?: keyof typeof Ionicons.glyphMap;
-  rightIcon?: keyof typeof Ionicons.glyphMap;
-  onRightIconPress?: () => void;
   characterCount?: boolean;
   maxLength?: number;
+  showPasswordToggle?: boolean;
+  leftIcon?: keyof typeof Ionicons.glyphMap;
+  helperText?: string;
 }
 
-export default function Input({
+const AnimatedView = Animated.createAnimatedComponent(View);
+
+export default function EnhancedInput({
   label,
   error,
   success,
-  helperText,
-  showPasswordToggle,
-  leftIcon,
-  rightIcon,
-  onRightIconPress,
   characterCount,
   maxLength,
+  showPasswordToggle,
+  leftIcon,
+  helperText,
   className,
   value,
   ...props
-}: InputProps) {
+}: EnhancedInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
   const shakeOffset = useSharedValue(0);
+  const borderScale = useSharedValue(1);
 
-  const animatedBorderStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: isFocused ? 1.01 : 1 }],
-  }));
-
-  const handleFocus = (e: any) => {
-    setIsFocused(true);
-    props.onFocus?.(e);
+  const triggerShake = () => {
+    'worklet';
+    shakeOffset.value = withSequence(
+      withTiming(-5, { duration: 50 }),
+      withSpring(5, { damping: 10, stiffness: 400 }),
+      withSpring(-5, { damping: 10, stiffness: 400 }),
+      withSpring(5, { damping: 10, stiffness: 400 }),
+      withSpring(0, { damping: 10, stiffness: 400 })
+    );
   };
 
-  const handleBlur = (e: any) => {
+  const triggerError = () => {
+    runOnJS(hapticLight)();
+    triggerShake();
+  };
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shakeOffset.value }],
+  }));
+
+  const animatedBorderStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: borderScale.value }],
+  }));
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    borderScale.value = withSpring(1.02);
+    props.onFocus?.(undefined as any);
+  };
+
+  const handleBlur = () => {
     setIsFocused(false);
-    props.onBlur?.(e);
+    borderScale.value = withSpring(1);
+    props.onBlur?.(undefined as any);
   };
 
   const borderColor = error
@@ -74,7 +100,7 @@ export default function Input({
   );
 
   return (
-    <AnimatedView className="w-full" style={animatedBorderStyle}>
+    <AnimatedView style={animatedContainerStyle} className="w-full">
       {label && (
         <View className="flex-row items-center justify-between mb-1.5">
           <Text className="text-sm font-semibold text-gray-300">{label}</Text>
@@ -85,14 +111,17 @@ export default function Input({
       <AnimatedView
         className={cn(
           'flex-row items-center rounded-2xl bg-gray-900 overflow-hidden',
-          'border-2 transition-all duration-200',
+          'border-2 transition-colors duration-200',
           error && 'border-red-500',
           success && !error && 'border-emerald-500',
           !error && !success && isFocused && 'border-purple-500',
           !error && !success && !isFocused && 'border-gray-800',
           className
         )}
-        style={{ borderColor }}
+        style={[
+          { borderColor },
+          animatedBorderStyle,
+        ]}
       >
         {leftIcon && (
           <View className="pl-4">
@@ -121,7 +150,7 @@ export default function Input({
           <Pressable
             className="pr-4"
             onPress={() => {
-              hapticLight();
+              hapticSelection();
               setShowPassword(!showPassword);
             }}
           >
@@ -129,19 +158,6 @@ export default function Input({
               name={showPassword ? 'eye-off-outline' : 'eye-outline'}
               size={20}
               color="#6b7280"
-            />
-          </Pressable>
-        )}
-
-        {rightIcon && (
-          <Pressable
-            className="pr-4"
-            onPress={onRightIconPress}
-          >
-            <Ionicons
-              name={rightIcon}
-              size={20}
-              color={error ? '#ef4444' : '#6b7280'}
             />
           </Pressable>
         )}

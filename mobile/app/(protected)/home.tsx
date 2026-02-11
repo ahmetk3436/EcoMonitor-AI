@@ -8,14 +8,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useRouter } from 'expo-router';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import api from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { hapticLight, hapticSelection } from '../../lib/haptics';
 import { shareAlert } from '../../lib/share';
 import { recordDailyCheck, getStreakIcon, getStreakMessage } from '../../lib/streak';
 import type { StreakData } from '../../lib/streak';
-import Skeleton from '../../components/ui/Skeleton';
+import { StatsCardSkeleton, ListItemSkeleton } from '../../components/ui/EnhancedSkeleton';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface AlertItem {
   id: string;
@@ -49,6 +57,131 @@ const CHANGE_COLORS: Record<string, string> = {
   water_change: '#3b82f6',
   urban_expansion: '#8b5cf6',
 };
+
+// Animated stat card component
+function AnimatedStatCard({
+  icon,
+  value,
+  label,
+  color,
+  onPress,
+}: {
+  icon: string;
+  value: number;
+  label: string;
+  color: string;
+  onPress: () => void;
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    scale.value = withSpring(0.95);
+    hapticLight();
+    onPress();
+    setTimeout(() => {
+      scale.value = withSpring(1);
+    }, 100);
+  };
+
+  return (
+    <AnimatedPressable
+      onPress={handlePress}
+      style={animatedStyle}
+      className="flex-1 mx-2"
+    >
+      <View
+        className="rounded-2xl p-4 items-center border-2 border-gray-800"
+        style={{ backgroundColor: '#111827' }}
+      >
+        <View
+          className="w-12 h-12 rounded-full items-center justify-center"
+          style={{ backgroundColor: `${color}20` }}
+        >
+          <Ionicons name={icon as any} size={24} color={color} />
+        </View>
+        <Text className="text-2xl font-bold text-white mt-3">{value}</Text>
+        <Text className="text-xs text-gray-400 mt-1">{label}</Text>
+      </View>
+    </AnimatedPressable>
+  );
+}
+
+// Gradient streak card
+function GradientStreakCard({ streakData, onPress }: { streakData: StreakData; onPress: () => void }) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const getStreakGradient = (streak: number) => {
+    if (streak >= 30) return ['#fbbf24', '#f97316'];
+    if (streak >= 14) return ['#a855f7', '#8b5cf6'];
+    if (streak >= 7) return ['#fbbf24', '#d97706'];
+    if (streak >= 3) return ['#e5e7eb', '#9ca3af'];
+    return ['#10b981', '#059669'];
+  };
+
+  const colors = getStreakGradient(streakData.currentStreak);
+
+  return (
+    <AnimatedPressable
+      onPress={() => {
+        scale.value = withSpring(0.97);
+        hapticLight();
+        onPress();
+        setTimeout(() => {
+          scale.value = withSpring(1);
+        }, 100);
+      }}
+      style={animatedStyle}
+      className="mx-4 mb-4 overflow-hidden rounded-2xl"
+    >
+      <LinearGradient
+        colors={colors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="p-4 flex-row items-center justify-between"
+      >
+        <View className="flex-row items-center flex-1">
+          <View
+            className="w-14 h-14 rounded-full items-center justify-center"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+          >
+            <Ionicons
+              name={getStreakIcon(streakData.currentStreak) as any}
+              size={28}
+              color="#ffffff"
+            />
+          </View>
+          <View className="ml-3">
+            <View className="flex-row items-center">
+              <Text className="text-2xl font-bold text-white">
+                {streakData.currentStreak}
+              </Text>
+              <Text className="text-white/80 text-sm ml-1">
+                {streakData.currentStreak === 1 ? 'day' : 'days'}
+              </Text>
+            </View>
+            <Text className="text-white/70 text-xs mt-0.5">
+              {getStreakMessage(streakData.currentStreak)}
+            </Text>
+          </View>
+        </View>
+        <View
+          className="rounded-full px-3 py-1"
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+        >
+          <Text className="text-white font-bold text-xs tracking-wider">STREAK</Text>
+        </View>
+      </LinearGradient>
+    </AnimatedPressable>
+  );
+}
 
 export default function HomeScreen() {
   const { user, isGuest, guestUsageCount } = useAuth();
@@ -90,28 +223,28 @@ export default function HomeScreen() {
   const getConfidenceColor = (c: number) => {
     if (c > 0.8) return '#ef4444';
     if (c > 0.5) return '#f97316';
-    return '#16a34a';
+    return '#10b981';
   };
 
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
         <View className="px-6 pt-6 pb-4">
-          <Skeleton width="60%" height={32} borderRadius={8} />
-          <Skeleton width="40%" height={16} borderRadius={4} style={{ marginTop: 8 }} />
+          <View className="h-8 w-48 bg-gray-800 rounded-lg mb-2" />
+          <View className="h-4 w-64 bg-gray-800 rounded" />
+        </View>
+        <View className="px-4 mb-6">
+          <View className="h-24 bg-gray-900 rounded-2xl" />
         </View>
         <View className="flex-row px-4 mb-6">
           {[0, 1, 2].map((i) => (
-            <View key={i} style={{ flex: 1, marginHorizontal: 8 }}>
-              <Skeleton width="100%" height={100} borderRadius={16} />
-            </View>
+            <StatsCardSkeleton key={i} />
           ))}
         </View>
-        <View className="px-4">
+        <View className="px-6">
+          <View className="h-5 w-32 bg-gray-800 rounded-lg mb-3" />
           {[0, 1, 2].map((i) => (
-            <View key={i} style={{ marginBottom: 12 }}>
-              <Skeleton width="100%" height={80} borderRadius={16} />
-            </View>
+            <ListItemSkeleton key={i} />
           ))}
         </View>
       </SafeAreaView>
@@ -130,7 +263,7 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* Header */}
+        {/* Header with gradient text effect */}
         <View className="px-6 pt-6 pb-4">
           <Text className="text-3xl font-bold text-white">EcoMonitor AI</Text>
           <Text className="text-base text-gray-400 mt-1">
@@ -138,90 +271,70 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {/* Guest Banner */}
+        {/* Guest Banner with gradient border */}
         {isGuest && (
           <Pressable
-            className="mx-4 mb-4 rounded-2xl p-4 flex-row items-center"
-            style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}
+            className="mx-4 mb-4 rounded-2xl p-4 flex-row items-center border-2"
+            style={{
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderColor: 'rgba(16, 185, 129, 0.3)',
+            }}
             onPress={() => { hapticLight(); router.push('/(auth)/register'); }}
           >
             <Ionicons name="information-circle" size={24} color="#10b981" />
             <Text className="flex-1 text-emerald-400 ml-3 text-sm">
               {3 - guestUsageCount} free analyses remaining
             </Text>
-            <Text className="text-emerald-400 font-semibold text-sm">Create Account</Text>
+            <View
+              className="px-3 py-1.5 rounded-full"
+              style={{ backgroundColor: '#10b981' }}
+            >
+              <Text className="text-white font-semibold text-xs">Create Account</Text>
+            </View>
           </Pressable>
         )}
 
-        {/* Streak Card */}
-        <View
-          className="mx-4 mb-4 rounded-2xl p-4 flex-row items-center justify-between"
-          style={{
-            backgroundColor: '#111827',
-            borderWidth: 1,
-            borderColor: '#1f2937',
+        {/* Streak Card with gradient */}
+        <GradientStreakCard
+          streakData={streakData}
+          onPress={() => {
+            hapticSelection();
+            // Navigate to streak details or gamification screen
           }}
-        >
-          <View className="flex-row items-center">
-            <Ionicons
-              name={getStreakIcon(streakData.currentStreak) as any}
-              size={32}
-              color="#f97316"
-            />
-            <View className="ml-3">
-              <Text className="text-2xl font-bold text-white">
-                {streakData.currentStreak} {streakData.currentStreak === 1 ? 'day' : 'days'}
-              </Text>
-              <Text className="text-sm text-gray-400">
-                {getStreakMessage(streakData.currentStreak)}
-              </Text>
-            </View>
-          </View>
-          <View className="rounded-full px-3 py-1" style={{ backgroundColor: 'rgba(249, 115, 22, 0.15)' }}>
-            <Text className="text-orange-400 font-semibold text-xs">STREAK</Text>
-          </View>
-        </View>
+        />
 
-        {/* Stats Row */}
+        {/* Stats Row with animated cards */}
         <View className="flex-row px-4 mb-6">
-          <View
-            className="flex-1 mx-2 rounded-2xl p-4 items-center"
-            style={{
-              backgroundColor: '#111827',
-              borderWidth: 1,
-              borderColor: '#1f2937',
+          <AnimatedStatCard
+            icon="location"
+            value={coordinates.length}
+            label="Locations"
+            color="#10b981"
+            onPress={() => {
+              hapticSelection();
+              router.push('/(protected)/map' as any);
             }}
-          >
-            <Ionicons name="location" size={28} color="#10b981" />
-            <Text className="text-2xl font-bold text-white mt-2">{coordinates.length}</Text>
-            <Text className="text-xs text-gray-400 mt-1">Locations</Text>
-          </View>
-          <View
-            className="flex-1 mx-2 rounded-2xl p-4 items-center"
-            style={{
-              backgroundColor: '#111827',
-              borderWidth: 1,
-              borderColor: '#1f2937',
+          />
+          <AnimatedStatCard
+            icon="notifications"
+            value={alerts.length}
+            label="Alerts"
+            color="#f97316"
+            onPress={() => {
+              hapticSelection();
+              router.push('/(protected)/alerts' as any);
             }}
-          >
-            <Ionicons name="notifications" size={28} color="#f97316" />
-            <Text className="text-2xl font-bold text-white mt-2">{alerts.length}</Text>
-            <Text className="text-xs text-gray-400 mt-1">Alerts</Text>
-          </View>
-          <View
-            className="flex-1 mx-2 rounded-2xl p-4 items-center"
-            style={{
-              backgroundColor: '#111827',
-              borderWidth: 1,
-              borderColor: '#1f2937',
+          />
+          <AnimatedStatCard
+            icon="analytics"
+            value={alerts.filter((a) => a.confidence > 0.8).length}
+            label="Critical"
+            color="#ef4444"
+            onPress={() => {
+              hapticSelection();
+              router.push('/(protected)/alerts' as any);
             }}
-          >
-            <Ionicons name="analytics" size={28} color="#ef4444" />
-            <Text className="text-2xl font-bold text-white mt-2">
-              {alerts.filter((a) => a.confidence > 0.8).length}
-            </Text>
-            <Text className="text-xs text-gray-400 mt-1">Critical</Text>
-          </View>
+          />
         </View>
 
         {/* Recent Alerts */}
@@ -229,13 +342,13 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-bold text-white">Recent Alerts</Text>
             <Pressable onPress={() => { hapticSelection(); router.push('/(protected)/alerts' as any); }}>
-              <Text className="text-emerald-400 text-sm font-medium">View All</Text>
+              <Text className="text-purple-400 text-sm font-medium">View All</Text>
             </Pressable>
           </View>
           {alerts.length === 0 ? (
             <View
-              className="rounded-2xl p-6 items-center"
-              style={{ backgroundColor: '#111827', borderWidth: 1, borderColor: '#1f2937' }}
+              className="rounded-2xl p-6 items-center border-2 border-gray-800"
+              style={{ backgroundColor: '#111827' }}
             >
               <Ionicons name="checkmark-circle" size={48} color="#10b981" />
               <Text className="text-white font-semibold mt-3">No alerts - all clear</Text>
@@ -245,58 +358,81 @@ export default function HomeScreen() {
             </View>
           ) : (
             alerts.slice(0, 3).map((alert) => (
-              <View
+              <Pressable
                 key={alert.id}
-                className="rounded-2xl p-4 mb-3"
-                style={{
-                  backgroundColor: '#111827',
-                  borderWidth: 1,
-                  borderColor: '#1f2937',
+                className="rounded-2xl p-4 mb-3 border-2 border-gray-800"
+                style={{ backgroundColor: '#111827' }}
+                onPress={() => {
+                  hapticSelection();
+                  // Navigate to alert details
                 }}
               >
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center">
-                    <Ionicons
-                      name={(CHANGE_ICONS[alert.change_type] || 'alert-circle') as any}
-                      size={20}
-                      color={CHANGE_COLORS[alert.change_type] || '#6b7280'}
-                    />
+                    <View
+                      className="w-8 h-8 rounded-full items-center justify-center"
+                      style={{ backgroundColor: `${CHANGE_COLORS[alert.change_type]}20` }}
+                    >
+                      <Ionicons
+                        name={(CHANGE_ICONS[alert.change_type] || 'alert-circle') as any}
+                        size={18}
+                        color={CHANGE_COLORS[alert.change_type] || '#6b7280'}
+                      />
+                    </View>
                     <Text className="ml-2 text-base font-semibold text-white">
                       {alert.change_type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                     </Text>
                   </View>
-                  <Text
-                    style={{ color: getConfidenceColor(alert.confidence) }}
-                    className="text-sm font-bold"
+                  <View
+                    className="px-2 py-1 rounded-full"
+                    style={{ backgroundColor: `${getConfidenceColor(alert.confidence)}20` }}
                   >
-                    {Math.round(alert.confidence * 100)}%
-                  </Text>
+                    <Text
+                      style={{ color: getConfidenceColor(alert.confidence) }}
+                      className="text-xs font-bold"
+                    >
+                      {Math.round(alert.confidence * 100)}%
+                    </Text>
+                  </View>
                 </View>
-                <Text className="text-gray-400 text-xs mb-2">
+                <Text className="text-gray-500 text-xs mb-2">
                   {new Date(alert.detected_at).toLocaleDateString()}
                 </Text>
                 <Text className="text-gray-300 text-sm" numberOfLines={2}>
                   {alert.summary}
                 </Text>
-                <Pressable
-                  className="flex-row items-center mt-3"
-                  onPress={() => {
-                    hapticLight();
-                    shareAlert({
-                      id: alert.id,
-                      coordinateId: alert.coordinate_id,
-                      changeType: alert.change_type as any,
-                      confidence: alert.confidence,
-                      coordinates: { lat: alert.latitude, lng: alert.longitude, label: '' },
-                      detectedAt: alert.detected_at,
-                      summary: alert.summary,
-                    });
-                  }}
-                >
-                  <Ionicons name="share-outline" size={16} color="#6b7280" />
-                  <Text className="text-gray-400 text-xs ml-1">Share</Text>
-                </Pressable>
-              </View>
+                <View className="flex-row items-center mt-3 justify-between">
+                  <Pressable
+                    className="flex-row items-center px-3 py-1.5 rounded-full border border-gray-700"
+                    onPress={() => {
+                      hapticLight();
+                      shareAlert({
+                        id: alert.id,
+                        coordinateId: alert.coordinate_id,
+                        changeType: alert.change_type as any,
+                        confidence: alert.confidence,
+                        coordinates: { lat: alert.latitude, lng: alert.longitude, label: '' },
+                        detectedAt: alert.detected_at,
+                        summary: alert.summary,
+                      });
+                    }}
+                  >
+                    <Ionicons name="share-outline" size={14} color="#9ca3af" />
+                    <Text className="text-gray-400 text-xs ml-1">Share</Text>
+                  </Pressable>
+                  <Pressable
+                    className="flex-row items-center px-3 py-1.5 rounded-full"
+                    style={{ backgroundColor: '#8b5cf650' }}
+                    onPress={() => {
+                      hapticSelection();
+                      // View details action
+                    }}
+                  >
+                    <Ionicons name="arrow-forward" size={14} color="#8b5cf6" />
+                    <Text className="text-purple-400 text-xs ml-1 font-medium">Details</Text>
+                  </Pressable>
+                </View>
+              </Pressable>
             ))
           )}
         </View>
@@ -306,13 +442,13 @@ export default function HomeScreen() {
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-bold text-white">Your Locations</Text>
             <Pressable onPress={() => { hapticSelection(); router.push('/(protected)/map' as any); }}>
-              <Text className="text-emerald-400 text-sm font-medium">View All</Text>
+              <Text className="text-purple-400 text-sm font-medium">View All</Text>
             </Pressable>
           </View>
           {coordinates.length === 0 ? (
             <View
-              className="rounded-2xl p-6 items-center"
-              style={{ backgroundColor: '#111827', borderWidth: 1, borderColor: '#1f2937' }}
+              className="rounded-2xl p-6 items-center border-2 border-gray-800"
+              style={{ backgroundColor: '#111827' }}
             >
               <Ionicons name="map-outline" size={48} color="#6b7280" />
               <Text className="text-white font-semibold mt-3">No locations yet</Text>
@@ -325,16 +461,19 @@ export default function HomeScreen() {
               {coordinates.slice(0, 5).map((coord) => (
                 <Pressable
                   key={coord.id}
-                  className="rounded-2xl p-4 mr-3"
+                  className="rounded-2xl p-4 mr-3 border-2 border-gray-800"
                   style={{
                     width: 160,
                     backgroundColor: '#111827',
-                    borderWidth: 1,
-                    borderColor: '#1f2937',
                   }}
                   onPress={() => { hapticSelection(); router.push('/(protected)/map' as any); }}
                 >
-                  <Ionicons name="location-outline" size={24} color="#10b981" />
+                  <View
+                    className="w-10 h-10 rounded-full items-center justify-center"
+                    style={{ backgroundColor: '#10b98120' }}
+                  >
+                    <Ionicons name="location-outline" size={20} color="#10b981" />
+                  </View>
                   <Text className="text-white font-semibold mt-2" numberOfLines={1}>
                     {coord.label}
                   </Text>
@@ -347,33 +486,52 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* Quick Actions */}
+        {/* Quick Actions with gradient */}
         <View className="flex-row px-4 mb-8">
           <Pressable
-            className="flex-1 mx-2 rounded-2xl py-4 items-center flex-row justify-center"
-            style={{ backgroundColor: '#10b981' }}
+            className="flex-1 mx-2 rounded-2xl py-4 items-center flex-row justify-center overflow-hidden"
             onPress={() => { hapticLight(); router.push('/(protected)/map' as any); }}
           >
-            <Ionicons name="map-outline" size={20} color="white" />
-            <Text className="text-white font-semibold ml-2">Add Location</Text>
+            <LinearGradient
+              colors={['#10b981', '#059669']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="flex-1 flex-row items-center justify-center py-4 rounded-2xl"
+            >
+              <Ionicons name="map-outline" size={20} color="white" />
+              <Text className="text-white font-semibold ml-2">Add Location</Text>
+            </LinearGradient>
           </Pressable>
           <Pressable
-            className="flex-1 mx-2 rounded-2xl py-4 items-center flex-row justify-center"
-            style={{ backgroundColor: '#10b981' }}
+            className="flex-1 mx-2 rounded-2xl py-4 items-center flex-row justify-center overflow-hidden"
             onPress={() => { hapticLight(); router.push('/(protected)/alerts' as any); }}
           >
-            <Ionicons name="notifications-outline" size={20} color="white" />
-            <Text className="text-white font-semibold ml-2">View Alerts</Text>
+            <LinearGradient
+              colors={['#8b5cf6', '#7c3aed']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="flex-1 flex-row items-center justify-center py-4 rounded-2xl"
+            >
+              <Ionicons name="notifications-outline" size={20} color="white" />
+              <Text className="text-white font-semibold ml-2">View Alerts</Text>
+            </LinearGradient>
           </Pressable>
         </View>
 
         {/* Sign Up CTA for guests */}
         {isGuest && (
           <Pressable
-            className="mx-4 mb-8 rounded-xl bg-emerald-600 py-4 items-center"
+            className="mx-4 mb-8 rounded-2xl py-4 items-center overflow-hidden"
             onPress={() => { hapticLight(); router.push('/(auth)/register'); }}
           >
-            <Text className="text-base font-semibold text-white">Sign Up for Full Access</Text>
+            <LinearGradient
+              colors={['#8b5cf6', '#ec4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="w-full flex-row items-center justify-center py-4 rounded-2xl"
+            >
+              <Text className="text-base font-bold text-white">Sign Up for Full Access</Text>
+            </LinearGradient>
           </Pressable>
         )}
       </ScrollView>
