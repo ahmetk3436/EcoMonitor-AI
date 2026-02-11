@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -93,7 +93,7 @@ export default function StreakCard({ streakData, onPress }: StreakCardProps) {
     <Pressable onPress={handlePress}>
       <Animated.View style={animatedContainerStyle}>
         <LinearGradient
-          colors={[...gradient]}
+          colors={gradient as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{

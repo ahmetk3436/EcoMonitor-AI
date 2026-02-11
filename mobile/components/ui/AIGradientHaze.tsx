@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, type ViewStyle } from 'react-native';
+import { View, Text, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -16,7 +16,17 @@ interface AIGradientHazeProps {
   animated?: boolean;
 }
 
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+// Create a wrapper component for LinearGradient animation
+const AnimatedLinearGradientView = ({ style, colors }: { style: any; colors: readonly string[] }) => {
+  return (
+    <LinearGradient
+      colors={colors as readonly [string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={style}
+    />
+  );
+};
 
 export default function AIGradientHaze({
   children,
@@ -77,13 +87,12 @@ export default function AIGradientHaze({
             width: intensitySizes[intensity].width,
             height: intensitySizes[intensity].height,
             borderRadius: intensitySizes[intensity].width / 2,
-            filter: 'blur(60px)',
           },
           animatedStyle,
         ]}
       >
-        <AnimatedLinearGradient
-          colors={[...colors]}
+        <LinearGradient
+          colors={[...colors] as readonly [string, string]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ flex: 1 }}
@@ -118,14 +127,14 @@ export default function AIGradientHaze({
 
 // Preset gradient combinations for different vibes
 export const gradientPresets = {
-  cosmic: ['#8b5cf6', '#ec4899', '#f472b6'] as const,
-  ocean: ['#06b6d4', '#3b82f6', '#8b5cf6'] as const,
-  sunset: ['#f97316', '#ec4899', '#8b5cf6'] as const,
-  forest: ['#10b981', '#06b6d4', '#3b82f6'] as const,
-  aurora: ['#22c55e', '#10b981', '#06b6d4'] as const,
-  neon: ['#f472b6', '#8b5cf6', '#6366f1'] as const,
-  gold: ['#fbbf24', '#f97316', '#ef4444'] as const,
-  mono: ['#6b7280', '#374151', '#1f2937'] as const,
+  cosmic: ['#8b5cf6', '#ec4899'] as const,
+  ocean: ['#06b6d4', '#3b82f6'] as const,
+  sunset: ['#f97316', '#ec4899'] as const,
+  forest: ['#10b981', '#06b6d4'] as const,
+  aurora: ['#22c55e', '#10b981'] as const,
+  neon: ['#f472b6', '#8b5cf6'] as const,
+  gold: ['#fbbf24', '#f97316'] as const,
+  mono: ['#6b7280', '#374151'] as const,
 };
 
 // AI Processing Overlay
@@ -177,13 +186,12 @@ export function AIProcessingOverlay({
               width: 400,
               height: 400,
               borderRadius: 200,
-              filter: 'blur(80px)',
             },
             animatedPulseStyle,
           ]}
         >
           <LinearGradient
-            colors={gradientPresets.cosmic}
+            colors={gradientPresets.cosmic as readonly [string, string, string]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}

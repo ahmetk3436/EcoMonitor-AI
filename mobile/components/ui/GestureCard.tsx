@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Pressable,
+  View,
   type PressableProps,
   type GestureResponderEvent,
 } from 'react-native';

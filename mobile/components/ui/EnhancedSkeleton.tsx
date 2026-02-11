@@ -1,14 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { View, ViewStyle, Animated, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
-
-const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 interface SkeletonProps {
   width: number | string;
@@ -27,21 +19,6 @@ export default function EnhancedSkeleton({
   style,
   darkMode = true,
 }: SkeletonProps) {
-  const translateX = useSharedValue(-200);
-
-  useEffect(() => {
-    translateX.value = withRepeat(
-      withTiming(200, { duration: 1500 }),
-      -1,
-      false
-    );
-  }, []);
-
-  const animatedProps = useAnimatedProps(() => ({
-    x1: '-100%',
-    x2: translateX.value,
-  }));
-
   const baseColor = darkMode ? '#1f2937' : '#e5e7eb';
   const highlightColor = darkMode ? '#374151' : '#f3f4f6';
 
@@ -53,9 +30,12 @@ export default function EnhancedSkeleton({
     return <WaveSkeleton width={width} height={height} borderRadius={borderRadius} darkMode={darkMode} style={style} />;
   }
 
+  const widthValue = typeof width === 'number' ? width : undefined;
+
   return (
     <View
       style={[
+        StyleSheet.absoluteFill,
         {
           width,
           height,
@@ -66,9 +46,8 @@ export default function EnhancedSkeleton({
         style,
       ]}
     >
-      <AnimatedLinearGradient
-        animatedProps={animatedProps}
-        colors={['transparent', highlightColor, 'transparent']}
+      <LinearGradient
+        colors={['transparent', highlightColor, 'transparent'] as readonly [string, string, string]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={{
@@ -119,12 +98,12 @@ function PulseSkeleton({ width, height, borderRadius, darkMode, style }: any) {
 }
 
 function WaveSkeleton({ width, height, borderRadius, darkMode, style }: any) {
-  const wavePhase = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(-50)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
-      Animated.timing(wavePhase, {
-        toValue: 1,
+      Animated.timing(translateY, {
+        toValue: 50,
         duration: 2000,
         useNativeDriver: true,
       })
@@ -149,19 +128,12 @@ function WaveSkeleton({ width, height, borderRadius, darkMode, style }: any) {
       <Animated.View
         style={{
           position: 'absolute',
-          top: -50,
+          top: 0,
           left: 0,
           right: 0,
           height: 100,
           backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-          transform: [
-            {
-              translateY: wavePhase.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-50, 50],
-              }),
-            },
-          ],
+          transform: [{ translateY }],
         }}
       />
     </View>
@@ -171,7 +143,7 @@ function WaveSkeleton({ width, height, borderRadius, darkMode, style }: any) {
 // Card Skeleton Component for Bento Box layouts
 export function CardSkeleton({ width, height }: { width: number | string; height: number }) {
   return (
-    <View className="bg-gray-900 rounded-3xl overflow-hidden" style={{ width, height }}>
+    <View style={{ width, height }} className="bg-gray-900 rounded-3xl overflow-hidden">
       <EnhancedSkeleton width="100%" height={120} borderRadius={0} />
       <View className="p-4">
         <EnhancedSkeleton width="80%" height={16} borderRadius={8} />
@@ -188,7 +160,7 @@ export function CardSkeleton({ width, height }: { width: number | string; height
 // Stats Card Skeleton
 export function StatsCardSkeleton() {
   return (
-    <View className="bg-gray-900 rounded-2xl p-4 items-center">
+    <View className="bg-gray-900 rounded-2xl p-4 items-center flex-1 mx-2">
       <EnhancedSkeleton width={40} height={40} borderRadius={20} />
       <EnhancedSkeleton width={60} height={24} borderRadius={8} style={{ marginTop: 12 }} />
       <EnhancedSkeleton width={80} height={14} borderRadius={6} style={{ marginTop: 6 }} />
@@ -209,3 +181,4 @@ export function ListItemSkeleton() {
     </View>
   );
 }
+

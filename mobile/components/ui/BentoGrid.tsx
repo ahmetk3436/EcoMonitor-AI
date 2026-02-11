@@ -47,7 +47,7 @@ export default function BentoGrid({
           <View
             key={item.id}
             style={{
-              width,
+              width: width as any,
               height: item.rowSpan === 2 ? height * 2 + gap : height,
               marginRight: gap,
               marginBottom: gap,
@@ -83,14 +83,10 @@ export default function BentoGrid({
 }
 
 function calculateWidth(item: BentoItem, columns: number): string {
-  const containerWidth =
-    (columns - 1) * 12 + // gaps
-    12 * 2; // padding
-
   const colSpan = item.colSpan || 1;
   const basePercentage = 100 / columns;
 
-  return `${(basePercentage * colSpan) - (colSpan - 1) * 2}%`;
+  return `${(basePercentage * colSpan) - (colSpan > 1 ? (colSpan - 1) * 2 : 0)}%`;
 }
 
 // Preset Bento Card Components

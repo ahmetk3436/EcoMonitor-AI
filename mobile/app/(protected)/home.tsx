@@ -142,7 +142,7 @@ function GradientStreakCard({ streakData, onPress }: { streakData: StreakData; o
       className="mx-4 mb-4 overflow-hidden rounded-2xl"
     >
       <LinearGradient
-        colors={colors}
+        colors={colors as readonly [string, string]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         className="p-4 flex-row items-center justify-between"
@@ -493,7 +493,7 @@ export default function HomeScreen() {
             onPress={() => { hapticLight(); router.push('/(protected)/map' as any); }}
           >
             <LinearGradient
-              colors={['#10b981', '#059669']}
+              colors={['#10b981', '#059669'] as readonly [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="flex-1 flex-row items-center justify-center py-4 rounded-2xl"
@@ -507,7 +507,7 @@ export default function HomeScreen() {
             onPress={() => { hapticLight(); router.push('/(protected)/alerts' as any); }}
           >
             <LinearGradient
-              colors={['#8b5cf6', '#7c3aed']}
+              colors={['#8b5cf6', '#7c3aed'] as readonly [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="flex-1 flex-row items-center justify-center py-4 rounded-2xl"
@@ -525,7 +525,7 @@ export default function HomeScreen() {
             onPress={() => { hapticLight(); router.push('/(auth)/register'); }}
           >
             <LinearGradient
-              colors={['#8b5cf6', '#ec4899']}
+              colors={['#8b5cf6', '#ec4899'] as readonly [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="w-full flex-row items-center justify-center py-4 rounded-2xl"

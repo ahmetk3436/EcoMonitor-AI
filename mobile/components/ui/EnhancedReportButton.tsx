@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, View, ScrollView } from 'react-native';
+import { Alert, Pressable, Text, View, ScrollView, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from '../../lib/api';
@@ -223,16 +223,15 @@ export default function EnhancedReportButton({
               {/* Description Input */}
               <View className="mb-4">
                 <Text className="text-white font-semibold mb-2">Additional Details</Text>
-                <View className="rounded-2xl bg-gray-900 border-2 border-gray-800 p-4">
-                  <Text
-                    className="text-white min-h-[100px]"
-                    placeholder="Describe what happened..."
-                    placeholderTextColor="#6b7280"
-                    multiline
-                    onChangeText={setDescription}
-                    value={description}
-                  />
-                </View>
+                <TextInput
+                  className="rounded-2xl bg-gray-900 border-2 border-gray-800 p-4 text-white min-h-[100px]"
+                  placeholder="Describe what happened..."
+                  placeholderTextColor="#6b7280"
+                  multiline
+                  numberOfLines={4}
+                  onChangeText={setDescription}
+                  value={description}
+                />
               </View>
 
               {/* Review Section */}

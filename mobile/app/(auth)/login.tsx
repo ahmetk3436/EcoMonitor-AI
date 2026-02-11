@@ -117,7 +117,7 @@ export default function LoginScreen() {
             disabled={isLoading}
           >
             <LinearGradient
-              colors={['#10b981', '#059669']}
+              colors={['#10b981', '#059669'] as readonly [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="w-full flex-row items-center justify-center py-4"

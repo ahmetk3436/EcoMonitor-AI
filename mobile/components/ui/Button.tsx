@@ -3,6 +3,7 @@ import {
   Pressable,
   Text,
   ActivityIndicator,
+  View,
   type PressableProps,
 } from 'react-native';
 import Animated, {
@@ -119,33 +120,35 @@ export default function Button({
         onPressOut={handlePressOut}
         {...props}
       >
-        <View
-          className="absolute inset-0"
-          style={{
-            backgroundColor: isDisabled ? undefined : '#8b5cf6',
-            opacity: isDisabled ? 0.5 : 1,
-          }}
-        />
-        <View
-          className="absolute inset-0"
-          style={{
-            backgroundColor: isDisabled ? undefined : '#ec4899',
-            opacity: isDisabled ? 0.3 : 0.5,
-          }}
-        />
-        {isLoading ? (
-          <ActivityIndicator color="#ffffff" size="small" />
-        ) : (
-          <Text
-            className={cn(
-              'font-bold',
-              sizeTextStyles[size]
-            )}
-            style={{ position: 'relative', zIndex: 1 }}
-          >
-            {title}
-          </Text>
-        )}
+        <>
+          <View
+            className="absolute inset-0"
+            style={{
+              backgroundColor: isDisabled ? undefined : '#8b5cf6',
+              opacity: isDisabled ? 0.5 : 1,
+            }}
+          />
+          <View
+            className="absolute inset-0"
+            style={{
+              backgroundColor: isDisabled ? undefined : '#ec4899',
+              opacity: isDisabled ? 0.3 : 0.5,
+            }}
+          />
+          {isLoading ? (
+            <ActivityIndicator color="#ffffff" size="small" />
+          ) : (
+            <Text
+              className={cn(
+                'font-bold',
+                sizeTextStyles[size]
+              )}
+              style={{ position: 'relative', zIndex: 1 }}
+            >
+              {title}
+            </Text>
+          )}
+        </>
       </AnimatedPressable>
     );
   }
