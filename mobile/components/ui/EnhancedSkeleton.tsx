@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, ViewStyle, Animated, StyleSheet } from 'react-native';
+import { View, ViewStyle, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface SkeletonProps {
@@ -30,12 +30,11 @@ export default function EnhancedSkeleton({
     return <WaveSkeleton width={width} height={height} borderRadius={borderRadius} darkMode={darkMode} style={style} />;
   }
 
-  const widthValue = typeof width === 'number' ? width : undefined;
+  const widthNum = typeof width === 'number' ? width : undefined;
 
   return (
     <View
       style={[
-        StyleSheet.absoluteFill,
         {
           width,
           height,
@@ -51,8 +50,11 @@ export default function EnhancedSkeleton({
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={{
-          flex: 1,
-          width: '200%',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
         }}
       />
     </View>

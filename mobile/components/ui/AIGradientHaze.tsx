@@ -191,7 +191,7 @@ export function AIProcessingOverlay({
           ]}
         >
           <LinearGradient
-            colors={gradientPresets.cosmic as readonly [string, string, string]}
+            colors={gradientPresets.cosmic as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}

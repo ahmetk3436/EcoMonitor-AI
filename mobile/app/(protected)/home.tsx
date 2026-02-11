@@ -119,11 +119,11 @@ function GradientStreakCard({ streakData, onPress }: { streakData: StreakData; o
   }));
 
   const getStreakGradient = (streak: number) => {
-    if (streak >= 30) return ['#fbbf24', '#f97316'];
-    if (streak >= 14) return ['#a855f7', '#8b5cf6'];
-    if (streak >= 7) return ['#fbbf24', '#d97706'];
-    if (streak >= 3) return ['#e5e7eb', '#9ca3af'];
-    return ['#10b981', '#059669'];
+    if (streak >= 30) return ['#fbbf24', '#f97316'] as const;
+    if (streak >= 14) return ['#a855f7', '#8b5cf6'] as const;
+    if (streak >= 7) return ['#fbbf24', '#d97706'] as const;
+    if (streak >= 3) return ['#e5e7eb', '#9ca3af'] as const;
+    return ['#10b981', '#059669'] as const;
   };
 
   const colors = getStreakGradient(streakData.currentStreak);
