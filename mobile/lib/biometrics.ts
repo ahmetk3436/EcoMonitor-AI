@@ -1,4 +1,7 @@
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+
+const BIOMETRIC_ENABLED_KEY = 'eco_biometric_enabled';
 
 // Biometric authentication (Apple Guideline 4.2 - Native Utility).
 // Uses Face ID / Touch ID for secure session resumption.
@@ -30,18 +33,36 @@ export async function getBiometricType(): Promise<string> {
   return 'Biometric';
 }
 
-export async function authenticateWithBiometrics(
-  promptMessage = 'Authenticate to continue'
-): Promise<boolean> {
-  const available = await isBiometricAvailable();
-  if (!available) return false;
+export async function setBiometricLock(enabled: boolean): Promise<void> {
+  try {
+    await SecureStore.setItemAsync(BIOMETRIC_ENABLED_KEY, enabled ? 'true' : 'false');
+  } catch (error) {
+    console.error('Error saving biometric lock setting:', error);
+    throw error;
+  }
+}
 
-  const result = await LocalAuthentication.authenticateAsync({
-    promptMessage,
-    cancelLabel: 'Cancel',
-    disableDeviceFallback: false,
-    fallbackLabel: 'Use Passcode',
-  });
+export async function isBiometricLockEnabled(): Promise<boolean> {
+  try {
+    const value = await SecureStore.getItemAsync(BIOMETRIC_ENABLED_KEY);
+    return value === 'true';
+  } catch (error) {
+    console.error('Error reading biometric lock setting:', error);
+    return false;
+  }
+}
 
-  return result.success;
+export async function authenticateWithBiometrics(): Promise<boolean> {
+  try {
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'Unlock EcoMonitor AI',
+      fallbackLabel: 'Use Passcode',
+      cancelLabel: 'Cancel',
+      disableDeviceFallback: false,
+    });
+    return result.success;
+  } catch (error) {
+    console.error('Biometric authentication error:', error);
+    return false;
+  }
 }

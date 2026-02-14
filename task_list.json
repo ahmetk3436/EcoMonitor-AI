@@ -91,25 +91,25 @@
       "id": "enhance_008",
       "title": "Add expanded change type icons, colors, and severity badges across all screens",
       "description": "Currently only 4 change types have icons/colors defined in home.tsx (lines 47-59) and alerts.tsx (lines 22-34). With enhance_002 adding new types (deforestation, pollution, flooding, erosion, wildfire_risk, biodiversity_loss), all screens need updated icon/color maps plus severity badge rendering.\n\nModify file: mobile/app/(protected)/home.tsx\n- Expand CHANGE_ICONS (line 47): add deforestation: 'cut', pollution: 'cloud', flooding: 'rainy', erosion: 'trending-down', wildfire_risk: 'flame', biodiversity_loss: 'bug'\n- Expand CHANGE_COLORS (line 54): add deforestation: '#b45309', pollution: '#6b7280', flooding: '#0ea5e9', erosion: '#a16207', wildfire_risk: '#dc2626', biodiversity_loss: '#15803d'\n- In alert cards (line 360-436), add severity badge after the confidence badge:\n  {alert.severity \u0026\u0026 \u003cView className=\"px-2 py-0.5 rounded-full ml-2\" style={{ backgroundColor: `${getSeverityColor(alert.severity)}20` }}\u003e\u003cText style={{ color: getSeverityColor(alert.severity) }} className=\"text-xs font-bold\"\u003e{alert.severity.toUpperCase()}\u003c/Text\u003e\u003c/View\u003e}\n- Add helper: const getSeverityColor = (s: string) =\u003e ({ critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#22c55e' }[s] || '#6b7280')\n\nModify file: mobile/app/(protected)/alerts.tsx\n- Expand CHANGE_ICONS (line 22): same additions as home.tsx\n- Expand CHANGE_BORDER_COLORS (line 29): same color additions as home.tsx\n- In renderAlertItem, add severity badge next to confidence percentage\n- Add getSeverityColor helper function\n\nModify file: mobile/types/satellite.ts\n- Update AlertItem interface used in home.tsx to include optional severity field: severity?: string\n\nThis ensures consistent visual language across all screens for the expanded environmental monitoring categories.",
+      "status": "completed",
+      "priority": 6,
+      "depends_on": [],
+      "test_command": "cd mobile \u0026\u0026 npx tsc --noEmit",
+      "auto_commit": true,
+      "created_at": "",
+      "updated_at": "2026-02-14T20:37:55Z"
+    },
+    {
+      "id": "enhance_009",
+      "title": "Implement real biometric app lock with SecureStore persistence",
+      "description": "Settings screen (mobile/app/(protected)/settings.tsx lines 73-74, 262-285) has a biometric toggle UI that only updates local useState. The toggle doesn't persist across app restarts and doesn't actually lock the app. The biometrics.ts lib exists but is only checked for availability, never used for authentication.\n\nModify file: mobile/lib/biometrics.ts\n- Add BIOMETRIC_ENABLED_KEY constant: 'eco_biometric_enabled'\n- Add function setBiometricLock(enabled: boolean): stores to SecureStore\n- Add function isBiometricLockEnabled(): reads from SecureStore, returns boolean\n- Add function authenticateWithBiometrics(): calls LocalAuthentication.authenticateAsync with promptMessage 'Unlock EcoMonitor AI', returns boolean\n\nModify file: mobile/app/(protected)/settings.tsx\n- Import { setBiometricLock, isBiometricLockEnabled } from '../../lib/biometrics'\n- In useEffect checkBiometrics (line 84): also load persisted biometric state: const enabled = await isBiometricLockEnabled(); setBiometricEnabled(enabled);\n- In Switch onValueChange (line 276): call setBiometricLock(val) after setBiometricEnabled(val)\n\nModify file: mobile/app/(protected)/_layout.tsx\n- Add biometric gate: on mount, check isBiometricLockEnabled(). If true, show a full-screen lock overlay (bg-gray-950 with Ionicons lock-closed size 64 color emerald-500 and 'Unlock with {biometricType}' text)\n- Call authenticateWithBiometrics() automatically on mount. If fails, show 'Try Again' button\n- Only render children (Slot) after successful authentication or if biometric lock is disabled\n- State: const [isUnlocked, setIsUnlocked] = useState(false); const [biometricRequired, setBiometricRequired] = useState(false)\n- On mount: const required = await isBiometricLockEnabled(); setBiometricRequired(required); if (!required) setIsUnlocked(true); else { const success = await authenticateWithBiometrics(); setIsUnlocked(success); }\n- Import { authenticateWithBiometrics, isBiometricLockEnabled } from '../../lib/biometrics'",
       "status": "in_progress",
       "priority": 6,
       "depends_on": [],
       "test_command": "cd mobile \u0026\u0026 npx tsc --noEmit",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T20:28:55Z"
-    },
-    {
-      "id": "enhance_009",
-      "title": "Implement real biometric app lock with SecureStore persistence",
-      "description": "Settings screen (mobile/app/(protected)/settings.tsx lines 73-74, 262-285) has a biometric toggle UI that only updates local useState. The toggle doesn't persist across app restarts and doesn't actually lock the app. The biometrics.ts lib exists but is only checked for availability, never used for authentication.\n\nModify file: mobile/lib/biometrics.ts\n- Add BIOMETRIC_ENABLED_KEY constant: 'eco_biometric_enabled'\n- Add function setBiometricLock(enabled: boolean): stores to SecureStore\n- Add function isBiometricLockEnabled(): reads from SecureStore, returns boolean\n- Add function authenticateWithBiometrics(): calls LocalAuthentication.authenticateAsync with promptMessage 'Unlock EcoMonitor AI', returns boolean\n\nModify file: mobile/app/(protected)/settings.tsx\n- Import { setBiometricLock, isBiometricLockEnabled } from '../../lib/biometrics'\n- In useEffect checkBiometrics (line 84): also load persisted biometric state: const enabled = await isBiometricLockEnabled(); setBiometricEnabled(enabled);\n- In Switch onValueChange (line 276): call setBiometricLock(val) after setBiometricEnabled(val)\n\nModify file: mobile/app/(protected)/_layout.tsx\n- Add biometric gate: on mount, check isBiometricLockEnabled(). If true, show a full-screen lock overlay (bg-gray-950 with Ionicons lock-closed size 64 color emerald-500 and 'Unlock with {biometricType}' text)\n- Call authenticateWithBiometrics() automatically on mount. If fails, show 'Try Again' button\n- Only render children (Slot) after successful authentication or if biometric lock is disabled\n- State: const [isUnlocked, setIsUnlocked] = useState(false); const [biometricRequired, setBiometricRequired] = useState(false)\n- On mount: const required = await isBiometricLockEnabled(); setBiometricRequired(required); if (!required) setIsUnlocked(true); else { const success = await authenticateWithBiometrics(); setIsUnlocked(success); }\n- Import { authenticateWithBiometrics, isBiometricLockEnabled } from '../../lib/biometrics'",
-      "status": "pending",
-      "priority": 6,
-      "depends_on": [],
-      "test_command": "cd mobile \u0026\u0026 npx tsc --noEmit",
-      "auto_commit": true,
-      "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T20:37:55Z"
     },
     {
       "id": "enhance_010",

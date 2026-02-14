@@ -17,7 +17,7 @@ import { shareAsync } from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../contexts/SubscriptionContext';
-import { isBiometricAvailable, getBiometricType } from '../../lib/biometrics';
+import { isBiometricAvailable, getBiometricType, setBiometricLock, isBiometricLockEnabled } from '../../lib/biometrics';
 import { hapticWarning, hapticMedium, hapticLight, hapticSelection, hapticSuccess, hapticError } from '../../lib/haptics';
 import api from '../../lib/api';
 import Button from '../../components/ui/Button';
@@ -92,6 +92,10 @@ export default function SettingsScreen() {
       const type = await getBiometricType();
       setBiometricType(type);
     }
+
+    // Load persisted biometric lock state
+    const enabled = await isBiometricLockEnabled();
+    setBiometricEnabled(enabled);
   };
 
   const handleRefresh = async () => {
@@ -367,11 +371,13 @@ export default function SettingsScreen() {
                 rightElement={
                   <Switch
                     value={biometricEnabled}
-                    onValueChange={(val) => {
-                      hapticLight();
+                    onValueChange={async (val) => {
                       setBiometricEnabled(val);
+                      hapticSelection();
+                      await setBiometricLock(val);
                     }}
-                    trackColor={{ true: '#10b981', false: '#374151' }}
+                    trackColor={{ false: '#374151', true: '#10b981' }}
+                    thumbColor={biometricEnabled ? '#ffffff' : '#f4f3f4'}
                   />
                 }
               />
