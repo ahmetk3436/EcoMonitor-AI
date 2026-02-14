@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { View, ViewStyle, Animated } from 'react-native';
+import { View, ViewStyle, Animated, DimensionValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 interface SkeletonProps {
-  width: number | string;
+  width: DimensionValue;
   height: number;
   borderRadius?: number;
   variant?: 'pulse' | 'shimmer' | 'wave';
@@ -143,7 +143,7 @@ function WaveSkeleton({ width, height, borderRadius, darkMode, style }: any) {
 }
 
 // Card Skeleton Component for Bento Box layouts
-export function CardSkeleton({ width, height }: { width: number | string; height: number }) {
+export function CardSkeleton({ width, height }: { width: DimensionValue; height: number }) {
   return (
     <View style={{ width, height }} className="bg-gray-900 rounded-3xl overflow-hidden">
       <EnhancedSkeleton width="100%" height={120} borderRadius={0} />

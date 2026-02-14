@@ -56,11 +56,10 @@ export default function GestureCard({
     opacity.value = withTiming(1);
   };
 
-  const handlePress = (e: GestureResponderEvent) => {
+  const handlePress = () => {
     if (disabled) return;
     hapticLight();
     onPress?.();
-    props.onPress?.(e);
   };
 
   const handleLongPress = () => {

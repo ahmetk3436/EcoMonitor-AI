@@ -17,7 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import api from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
-import { hapticLight, hapticSelection } from '../../lib/haptics';
+import { hapticLight, hapticSelection, hapticError } from '../../lib/haptics';
 import { shareAlert } from '../../lib/share';
 import { recordDailyCheck, getStreakIcon, getStreakMessage } from '../../lib/streak';
 import type { StreakData } from '../../lib/streak';
@@ -34,6 +34,7 @@ interface AlertItem {
   confidence: number;
   detected_at: string;
   summary: string;
+  severity?: string;
 }
 
 interface CoordItem {
@@ -49,10 +50,12 @@ const CHANGE_ICONS: Record<string, string> = {
   vegetation_loss: 'leaf',
   water_change: 'water',
   urban_expansion: 'business',
-  deforestation: 'leaf',
+  deforestation: 'cut',
   pollution: 'cloud',
   flooding: 'rainy',
-  erosion: 'layers',
+  erosion: 'trending-down',
+  wildfire_risk: 'flame',
+  biodiversity_loss: 'bug',
 };
 
 const CHANGE_COLORS: Record<string, string> = {
@@ -60,10 +63,32 @@ const CHANGE_COLORS: Record<string, string> = {
   vegetation_loss: '#ef4444',
   water_change: '#3b82f6',
   urban_expansion: '#8b5cf6',
-  deforestation: '#22c55e',
+  deforestation: '#b45309',
   pollution: '#6b7280',
-  flooding: '#06b6d4',
+  flooding: '#0ea5e9',
   erosion: '#a16207',
+  wildfire_risk: '#dc2626',
+  biodiversity_loss: '#15803d',
+};
+
+const getSeverityColor = (severity: string): string => {
+  const severityColors: Record<string, string> = {
+    critical: '#ef4444',
+    high: '#f97316',
+    medium: '#eab308',
+    low: '#22c55e',
+  };
+  return severityColors[severity] || '#6b7280';
+};
+
+const getSeverityBgColor = (severity: string): string => {
+  const bgColors: Record<string, string> = {
+    critical: '#fef2f2',
+    high: '#fff7ed',
+    medium: '#fefce8',
+    low: '#f0fdf4',
+  };
+  return bgColors[severity] || '#f3f4f6';
 };
 
 // Animated stat card component
@@ -198,18 +223,21 @@ export default function HomeScreen() {
   const [coordinates, setCoordinates] = useState<CoordItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [streakData, setStreakData] = useState<StreakData>({ currentStreak: 0, lastCheckDate: null });
 
   const fetchData = async () => {
     try {
+      setError(null);
       const [alertsRes, coordsRes] = await Promise.all([
-        api.get('/alerts', { params: { limit: 5 } }).catch(() => ({ data: { alerts: [] } })),
-        api.get('/coordinates', { params: { limit: 5 } }).catch(() => ({ data: { coordinates: [] } })),
+        api.get('/alerts', { params: { limit: 5 } }),
+        api.get('/coordinates', { params: { limit: 5 } }),
       ]);
       setAlerts(alertsRes.data?.alerts || []);
       setCoordinates(coordsRes.data?.coordinates || []);
-    } catch {
-      // silently handle errors
+    } catch (err: any) {
+      hapticError();
+      setError(err.response?.data?.message || 'Failed to load dashboard data. Please check your connection and try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -254,6 +282,32 @@ export default function HomeScreen() {
           {[0, 1, 2].map((i) => (
             <ListItemSkeleton key={i} />
           ))}
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
+        <View className="px-6 pt-6 pb-4">
+          <Text className="text-3xl font-bold text-white">EcoMonitor AI</Text>
+        </View>
+        <View className="flex-1 justify-center items-center px-8">
+          <Ionicons name="cloud-offline-outline" size={64} color="#ef4444" />
+          <Text className="text-lg font-semibold text-white mt-4">Connection Error</Text>
+          <Text className="text-sm text-gray-400 mt-2 text-center">{error}</Text>
+          <Pressable
+            className="rounded-2xl px-8 py-3 mt-6"
+            style={{ backgroundColor: '#10b981' }}
+            onPress={() => {
+              setError(null);
+              setLoading(true);
+              fetchData();
+            }}
+          >
+            <Text className="text-white font-semibold">Retry</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -391,16 +445,31 @@ export default function HomeScreen() {
                       {alert.change_type.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                     </Text>
                   </View>
-                  <View
-                    className="px-2 py-1 rounded-full"
-                    style={{ backgroundColor: `${getConfidenceColor(alert.confidence)}20` }}
-                  >
-                    <Text
-                      style={{ color: getConfidenceColor(alert.confidence) }}
-                      className="text-xs font-bold"
+                  <View className="flex-row items-center gap-2">
+                    <View
+                      className="px-2 py-1 rounded-full"
+                      style={{ backgroundColor: `${getConfidenceColor(alert.confidence)}20` }}
                     >
-                      {Math.round(alert.confidence * 100)}%
-                    </Text>
+                      <Text
+                        style={{ color: getConfidenceColor(alert.confidence) }}
+                        className="text-xs font-bold"
+                      >
+                        {Math.round(alert.confidence * 100)}%
+                      </Text>
+                    </View>
+                    {alert.severity && (
+                      <View
+                        className="px-2 py-1 rounded-full"
+                        style={{ backgroundColor: getSeverityBgColor(alert.severity) }}
+                      >
+                        <Text
+                          className="text-xs font-bold"
+                          style={{ color: getSeverityColor(alert.severity) }}
+                        >
+                          {alert.severity.toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </View>
                 <Text className="text-gray-500 text-xs mb-2">
@@ -422,6 +491,7 @@ export default function HomeScreen() {
                         coordinates: { lat: alert.latitude, lng: alert.longitude, label: '' },
                         detectedAt: alert.detected_at,
                         summary: alert.summary,
+                        severity: (alert.severity as any) || 'medium',
                       });
                     }}
                   >
@@ -433,7 +503,21 @@ export default function HomeScreen() {
                     style={{ backgroundColor: '#8b5cf650' }}
                     onPress={() => {
                       hapticSelection();
-                      // View details action
+                      router.push({
+                        pathname: '/(protected)/alert-detail' as any,
+                        params: {
+                          id: alert.id,
+                          coordinateId: alert.coordinate_id,
+                          changeType: alert.change_type,
+                          confidence: String(Math.round(alert.confidence * 100)),
+                          latitude: String(alert.latitude),
+                          longitude: String(alert.longitude),
+                          summary: alert.summary,
+                          detectedAt: alert.detected_at,
+                          severity: (alert as any).severity || 'medium',
+                          label: ''
+                        }
+                      });
                     }}
                   >
                     <Ionicons name="arrow-forward" size={14} color="#8b5cf6" />

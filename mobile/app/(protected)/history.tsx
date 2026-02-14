@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import api from '../../lib/api';
-import { hapticSelection } from '../../lib/haptics';
+import { hapticSelection, hapticError } from '../../lib/haptics';
 import type { AnalysisHistory, PaginatedHistory } from '../../types/history';
 
 export default function HistoryScreen() {
@@ -22,9 +22,11 @@ export default function HistoryScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchHistory = useCallback(async (pageNum: number, replace = false) => {
     try {
+      setError(null);
       const { data } = await api.get<PaginatedHistory>('/history', {
         params: { page: pageNum, limit: 20 },
       });
@@ -34,8 +36,9 @@ export default function HistoryScreen() {
         setHistory((prev) => [...prev, ...(data.data || [])]);
       }
       setHasMore(pageNum < data.total_pages);
-    } catch {
-      // silently handle errors
+    } catch (err: any) {
+      hapticError();
+      setError('Failed to load analysis history. Pull to refresh or try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -127,6 +130,33 @@ export default function HistoryScreen() {
         </View>
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#10b981" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
+        <View className="px-6 pt-6 pb-4">
+          <Text className="text-3xl font-bold text-white">Analysis History</Text>
+        </View>
+        <View className="flex-1 justify-center items-center px-8">
+          <Ionicons name="time-outline" size={64} color="#ef4444" />
+          <Text className="text-lg font-semibold text-white mt-4">Failed to Load History</Text>
+          <Text className="text-sm text-gray-400 mt-2 text-center">{error}</Text>
+          <Pressable
+            className="rounded-2xl px-8 py-3 mt-6"
+            style={{ backgroundColor: '#10b981' }}
+            onPress={() => {
+              setError(null);
+              setLoading(true);
+              setPage(1);
+              fetchHistory(1, true);
+            }}
+          >
+            <Text className="text-white font-semibold">Retry</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     );

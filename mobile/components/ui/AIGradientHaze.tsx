@@ -92,7 +92,7 @@ export default function AIGradientHaze({
         ]}
       >
         <LinearGradient
-          colors={[...colors] as readonly [string, string]}
+          colors={[...colors] as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{ flex: 1 }}

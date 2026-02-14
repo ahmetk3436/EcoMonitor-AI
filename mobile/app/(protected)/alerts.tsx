@@ -28,6 +28,8 @@ const CHANGE_ICONS: Record<ChangeType, keyof typeof Ionicons.glyphMap> = {
   pollution: 'cloud',
   flooding: 'rainy',
   erosion: 'layers',
+  wildfire_risk: 'flame',
+  biodiversity_loss: 'paw',
 };
 
 const CHANGE_BORDER_COLORS: Record<string, string> = {
@@ -35,10 +37,55 @@ const CHANGE_BORDER_COLORS: Record<string, string> = {
   vegetation_loss: '#ef4444',
   water_change: '#3b82f6',
   urban_expansion: '#8b5cf6',
-  deforestation: '#22c55e',
+  deforestation: '#b45309',
   pollution: '#6b7280',
-  flooding: '#06b6d4',
+  flooding: '#0ea5e9',
   erosion: '#a16207',
+  wildfire_risk: '#dc2626',
+  biodiversity_loss: '#15803d',
+};
+
+const CHANGE_BG_COLORS: Record<string, string> = {
+  urban_expansion: '#eef2ff',
+  vegetation_loss: '#fef2f2',
+  water_change: '#f0f9ff',
+  construction: '#fffbeb',
+  deforestation: '#fef3c7',
+  pollution: '#f3f4f6',
+  flooding: '#f0f9ff',
+  erosion: '#fef9c3',
+  wildfire_risk: '#fef2f2',
+  biodiversity_loss: '#f0fdf4',
+};
+
+const getSeverityColor = (severity: string): string => {
+  const severityColors: Record<string, string> = {
+    critical: '#ef4444',
+    high: '#f97316',
+    medium: '#eab308',
+    low: '#22c55e',
+  };
+  return severityColors[severity] || '#6b7280';
+};
+
+const getSeverityBgColor = (severity: string): string => {
+  const bgColors: Record<string, string> = {
+    critical: '#fef2f2',
+    high: '#fff7ed',
+    medium: '#fefce8',
+    low: '#f0fdf4',
+  };
+  return bgColors[severity] || '#f3f4f6';
+};
+
+const getSeverityBorderColor = (severity: string): string => {
+  const borderColors: Record<string, string> = {
+    critical: '#fecaca',
+    high: '#fed7aa',
+    medium: '#fef08a',
+    low: '#bbf7d0',
+  };
+  return borderColors[severity] || '#e5e7eb';
 };
 
 const getConfidenceColor = (confidence: number) => {
@@ -182,6 +229,37 @@ export default function AlertsScreen() {
         <Text className="text-gray-500 text-sm mb-2">
           Detected: {new Date(item.detectedAt).toLocaleDateString()}
         </Text>
+
+        {/* Badges Row */}
+        <View className="flex-row items-center flex-wrap gap-2 mb-3">
+          <View
+            className="px-2.5 py-1 rounded-full"
+            style={{ backgroundColor: CHANGE_BG_COLORS[item.changeType] || '#f3f4f6' }}
+          >
+            <Text
+              className="text-xs font-semibold"
+              style={{ color: borderColor }}
+            >
+              {confidencePercent}% confidence
+            </Text>
+          </View>
+          {item.severity && (
+            <View
+              className="px-2.5 py-1 rounded-full border"
+              style={{
+                backgroundColor: getSeverityBgColor(item.severity),
+                borderColor: getSeverityBorderColor(item.severity),
+              }}
+            >
+              <Text
+                className="text-xs font-bold"
+                style={{ color: getSeverityColor(item.severity) }}
+              >
+                {item.severity.toUpperCase()}
+              </Text>
+            </View>
+          )}
+        </View>
 
         <Text className="text-gray-300 mb-4">{item.summary}</Text>
 

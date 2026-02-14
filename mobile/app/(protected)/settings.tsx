@@ -155,7 +155,7 @@ export default function SettingsScreen() {
 
       const timestamp = new Date().toISOString().split('T')[0];
       const fileName = `ecomonitor-export-${timestamp}.csv`;
-      const filePath = `${FileSystem.cacheDirectory}${fileName}`;
+      const filePath = `${(FileSystem as any).cacheDirectory}${fileName}`;
 
       const blobData = response.data as Blob;
       const base64 = await new Promise<string>((resolve, reject) => {
@@ -170,7 +170,7 @@ export default function SettingsScreen() {
       });
 
       await FileSystem.writeAsStringAsync(filePath, base64, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: (FileSystem as any).EncodingType.Base64,
       });
 
       hapticSuccess();

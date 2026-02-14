@@ -27,6 +27,37 @@ Monitor environmental changes with EcoMonitor AI`;
   }
 }
 
+export interface AlertShareData {
+  changeType: string;
+  confidence: string;
+  latitude: string;
+  longitude: string;
+  summary: string;
+  severity: string;
+  detectedAt: string;
+}
+
+export async function shareAlertDetail(alertData: AlertShareData): Promise<void> {
+  const message = `EcoMonitor AI Alert
+
+Change Detected: ${alertData.changeType}
+Confidence: ${alertData.confidence}%
+Severity: ${alertData.severity.toUpperCase()}
+
+Location: ${alertData.latitude}, ${alertData.longitude}
+Detected: ${alertData.detectedAt}
+
+Summary:
+${alertData.summary}
+
+Download EcoMonitor AI to track environmental changes in real-time.`;
+
+  await Share.share({
+    message,
+    title: 'EcoMonitor Alert'
+  });
+}
+
 export async function shareAnalysisSummary(
   locationLabel: string,
   changeCount: number,
