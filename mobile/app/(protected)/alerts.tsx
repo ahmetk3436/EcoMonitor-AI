@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import api from '../../lib/api';
-import { hapticSuccess, hapticError, hapticLight } from '../../lib/haptics';
+import { hapticSuccess, hapticError, hapticLight, hapticSelection } from '../../lib/haptics';
 import { useSubscription } from '../../contexts/SubscriptionContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { shareAlert, shareAnalysisSummary } from '../../lib/share';
@@ -157,14 +157,39 @@ export default function AlertsScreen() {
       }
       hapticSuccess();
       await fetchAlerts();
-      Alert.alert('Analysis Complete', 'Share your findings?', [
-        {
-          text: 'Share',
-          onPress: () =>
-            shareAnalysisSummary('Location', alerts.length, 75),
-        },
-        { text: 'Later', style: 'cancel' },
-      ]);
+
+      if (!isSubscribed && !isGuest) {
+        Alert.alert(
+          'Analysis Complete!',
+          `You found ${alerts.length} environmental changes! Upgrade to Pro for unlimited analyses, CSV exports, and priority alerts.`,
+          [
+            {
+              text: 'Upgrade Now',
+              onPress: () => {
+                hapticSelection();
+                router.push('/(protected)/paywall' as any);
+              },
+            },
+            {
+              text: 'Share Results',
+              onPress: () => shareAnalysisSummary('Location', alerts.length, 75),
+            },
+            {
+              text: 'Later',
+              style: 'cancel',
+              onPress: () => hapticLight(),
+            },
+          ]
+        );
+      } else {
+        Alert.alert('Analysis Complete', 'Share your findings?', [
+          {
+            text: 'Share',
+            onPress: () => shareAnalysisSummary('Location', alerts.length, 75),
+          },
+          { text: 'Later', style: 'cancel' },
+        ]);
+      }
     } catch (err: any) {
       hapticError();
       const errorMessage = err.response?.data?.message || 'Analysis failed. Please try again.';

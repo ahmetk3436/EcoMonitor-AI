@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import api from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSubscription } from '../../contexts/SubscriptionContext';
 import { hapticLight, hapticSelection, hapticError } from '../../lib/haptics';
 import { shareAlert } from '../../lib/share';
 import { recordDailyCheck, getStreakIcon, getStreakMessage } from '../../lib/streak';
@@ -218,6 +219,7 @@ function GradientStreakCard({ streakData, onPress }: { streakData: StreakData; o
 
 export default function HomeScreen() {
   const { user, isGuest, guestUsageCount } = useAuth();
+  const { isSubscribed } = useSubscription();
   const router = useRouter();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [coordinates, setCoordinates] = useState<CoordItem[]>([]);
@@ -364,6 +366,34 @@ export default function HomeScreen() {
             // Navigate to streak details or gamification screen
           }}
         />
+
+        {/* Pro Tip Banner for non-subscribed users */}
+        {!isSubscribed && !isGuest && (
+          <Pressable
+            className="mx-4 mb-4 rounded-2xl p-4 overflow-hidden active:opacity-90"
+            onPress={() => {
+              hapticLight();
+              router.push('/(protected)/paywall' as any);
+            }}
+          >
+            <LinearGradient
+              colors={['#8b5cf6', '#7c3aed'] as readonly [string, string]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="absolute inset-0"
+            />
+            <View className="flex-row items-center">
+              <View className="w-10 h-10 bg-white/20 rounded-xl items-center justify-center">
+                <Ionicons name="diamond" size={24} color="#ffffff" />
+              </View>
+              <View className="ml-3 flex-1">
+                <Text className="text-white font-bold text-base">Unlock Pro Features</Text>
+                <Text className="text-white/70 text-xs mt-0.5">Unlimited analyses, exports & priority alerts</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
+            </View>
+          </Pressable>
+        )}
 
         {/* Stats Row with animated cards */}
         <View className="flex-row px-4 mb-6">
