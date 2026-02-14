@@ -92,6 +92,18 @@ const getSeverityBgColor = (severity: string): string => {
   return bgColors[severity] || '#f3f4f6';
 };
 
+const getScoreColor = (score: number): string => {
+  if (score > 75) return '#10b981';
+  if (score > 40) return '#f59e0b';
+  return '#ef4444';
+};
+
+const getScoreLabel = (score: number): string => {
+  if (score > 75) return 'Excellent';
+  if (score > 40) return 'Good';
+  return 'Building';
+};
+
 // Animated stat card component
 function AnimatedStatCard({
   icon,
@@ -227,6 +239,7 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [streakData, setStreakData] = useState<StreakData>({ currentStreak: 0, lastCheckDate: null });
+  const [impactScore, setImpactScore] = useState(0);
 
   const fetchData = async () => {
     try {
@@ -235,8 +248,33 @@ export default function HomeScreen() {
         api.get('/alerts', { params: { limit: 5 } }),
         api.get('/coordinates', { params: { limit: 5 } }),
       ]);
-      setAlerts(alertsRes.data?.alerts || []);
-      setCoordinates(coordsRes.data?.coordinates || []);
+      const alertsData = alertsRes.data?.alerts || [];
+      const coordsData = coordsRes.data?.coordinates || [];
+      setAlerts(alertsData);
+      setCoordinates(coordsData);
+
+      // Calculate impact score after streak data is available
+      let currentStreak = streakData.currentStreak;
+      try {
+        const freshStreak = await recordDailyCheck();
+        setStreakData(freshStreak);
+        currentStreak = freshStreak.currentStreak;
+      } catch {
+        // Keep existing streak data
+      }
+
+      // Calculate Environmental Impact Score
+      try {
+        const locationPoints = coordsData.length * 10;
+        const alertPoints = alertsData.length * 5;
+        const criticalBonus = alertsData.filter((a: AlertItem) => a.confidence > 0.8).length * 15;
+        const streakBonus = currentStreak * 2;
+        const calculatedScore = Math.min(100, locationPoints + alertPoints + criticalBonus + streakBonus);
+        setImpactScore(calculatedScore);
+      } catch (calcError) {
+        console.error('Score calculation error:', calcError);
+        setImpactScore(0);
+      }
     } catch (err: any) {
       hapticError();
       setError(err.response?.data?.message || 'Failed to load dashboard data. Please check your connection and try again.');
@@ -249,7 +287,6 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      recordDailyCheck().then(setStreakData).catch(() => {});
     }, [])
   );
 
@@ -394,6 +431,71 @@ export default function HomeScreen() {
             </View>
           </Pressable>
         )}
+
+        {/* Environmental Impact Score Card */}
+        <View className="mx-4 mb-4 rounded-2xl p-4 border-2 border-gray-800" style={{ backgroundColor: '#111827' }}>
+          {/* Header Row */}
+          <View className="flex-row items-center justify-between mb-3">
+            <View className="flex-row items-center">
+              <View className="w-8 h-8 rounded-full bg-amber-500/20 items-center justify-center mr-2">
+                <Ionicons name="trophy" size={16} color="#fbbf24" />
+              </View>
+              <Text className="text-base font-bold text-white">Environmental Impact Score</Text>
+            </View>
+            <View className="flex-row items-center">
+              <Text className="text-3xl font-bold text-white">{impactScore}</Text>
+              <Text className="text-gray-400 text-lg ml-1">/100</Text>
+            </View>
+          </View>
+
+          {/* Progress Bar */}
+          <View className="h-3 rounded-full bg-gray-800 overflow-hidden mb-2">
+            <View
+              className="h-full rounded-full"
+              style={{
+                width: `${impactScore}%`,
+                backgroundColor: getScoreColor(impactScore),
+              }}
+            />
+          </View>
+
+          {/* Score Label */}
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-xs text-gray-500">Your Impact Level</Text>
+            <Text
+              className="text-xs font-semibold"
+              style={{ color: getScoreColor(impactScore) }}
+            >
+              {getScoreLabel(impactScore)}
+            </Text>
+          </View>
+
+          {/* Score Breakdown */}
+          <View className="bg-gray-900/50 rounded-xl p-3 mb-2">
+            <Text className="text-xs text-gray-400 mb-2 font-medium">Score Breakdown</Text>
+            <View className="flex-row justify-between mb-1">
+              <Text className="text-xs text-gray-500">Locations Monitored</Text>
+              <Text className="text-xs text-emerald-400">+{coordinates.length * 10} pts</Text>
+            </View>
+            <View className="flex-row justify-between mb-1">
+              <Text className="text-xs text-gray-500">Alerts Detected</Text>
+              <Text className="text-xs text-amber-400">+{alerts.length * 5} pts</Text>
+            </View>
+            <View className="flex-row justify-between mb-1">
+              <Text className="text-xs text-gray-500">Critical Findings</Text>
+              <Text className="text-xs text-red-400">+{alerts.filter((a: AlertItem) => a.confidence > 0.8).length * 15} pts</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-xs text-gray-500">Daily Streak Bonus</Text>
+              <Text className="text-xs text-purple-400">+{streakData.currentStreak * 2} pts</Text>
+            </View>
+          </View>
+
+          {/* Motivational Text */}
+          <Text className="text-xs text-gray-500 leading-4">
+            Monitor more locations and maintain your daily streak to increase your environmental impact score.
+          </Text>
+        </View>
 
         {/* Stats Row with animated cards */}
         <View className="flex-row px-4 mb-6">
