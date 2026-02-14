@@ -28,13 +28,13 @@
       "id": "enhance_003",
       "title": "Wire history recording into satellite analysis handler",
       "description": "The HistoryService exists but the SatelliteHandler.GenerateAnalysis at backend/internal/handlers/satellite_handler.go line 21 never calls historyService.RecordAnalysis(). Analysis results are generated but never recorded in history, making the history screen always empty unless manually populated.\n\nModify file: backend/internal/handlers/satellite_handler.go\n- Update SatelliteHandler struct to include historyService: type SatelliteHandler struct { satelliteService *services.SatelliteService; historyService *services.HistoryService }\n- Update NewSatelliteHandler: func NewSatelliteHandler(satelliteService *services.SatelliteService, historyService *services.HistoryService) *SatelliteHandler\n- In GenerateAnalysis method, after successful analysis generation (line 30-40), extract userID from JWT context using extractUserID(c), then call h.historyService.RecordAnalysis(userID, coordinateID, \"satellite\", results)\n- Log but don't fail if history recording fails (non-critical path): if err := h.historyService.RecordAnalysis(...); err != nil { log.Printf(\"Failed to record analysis history: %v\", err) }\n- Add 'log' to imports\n\nModify file: backend/cmd/server/main.go\n- Update line 55: satelliteHandler := handlers.NewSatelliteHandler(satelliteService, historyService)\n\nModify file: backend/internal/routes/routes.go\n- No changes needed, handler signature hasn't changed from routes perspective\n\nThis ensures every analysis run is automatically persisted to the history table, making the History tab on mobile actually show real data.",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 9,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T19:04:46Z"
+      "updated_at": "2026-02-14T19:09:55Z"
     },
     {
       "id": "enhance_004",
@@ -136,13 +136,13 @@
       "id": "enhance_012",
       "title": "Add admin middleware role check and fix security gap in moderation routes",
       "description": "The routes.go file (line 67) has a comment noting the admin moderation panel needs proper admin middleware. Currently middleware.AdminRequired exists but needs verification. The backend needs a proper role-based access control.\n\nModify file: backend/internal/models/user.go\n- Add Role field: Role string `gorm:\"type:varchar(20);default:'user'\" json:\"role\"` — values: 'user', 'admin'\n\nModify file: backend/internal/middleware/auth.go\n- Verify AdminRequired middleware exists and correctly checks user role from DB:\n  func AdminRequired(db *gorm.DB) fiber.Handler that:\n  1. Extracts userID from JWT claims (same as JWTProtected)\n  2. Queries User from DB: var user models.User; db.First(\u0026user, \"id = ?\", userID)\n  3. Checks user.Role == \"admin\"\n  4. If not admin, returns 403 Forbidden: {\"error\": true, \"message\": \"Admin access required\"}\n  5. Calls c.Next() if admin\n\nModify file: backend/internal/services/auth_service.go\n- In Register method, ensure new users get Role: \"user\" by default (GORM default handles this)\n- In the JWT token generation, include role in claims: claims[\"role\"] = user.Role\n\nModify file: backend/internal/dto/auth_dto.go\n- Add Role string `json:\"role\"` to LoginResponse and any user-facing response DTOs\n\nModify file: backend/internal/handlers/auth_handler.go\n- Include role in login/register response so mobile app can display admin badge if needed\n\nThis fixes the documented security gap where any authenticated user could access admin moderation endpoints.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 9,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T19:09:55Z"
     },
     {
       "id": "enhance_013",
