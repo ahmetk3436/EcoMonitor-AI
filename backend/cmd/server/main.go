@@ -52,7 +52,7 @@ func main() {
 	webhookHandler := handlers.NewWebhookHandler(subscriptionService, cfg)
 	moderationHandler := handlers.NewModerationHandler(moderationService)
 	coordinateHandler := handlers.NewCoordinateHandler(coordinateService)
-	satelliteHandler := handlers.NewSatelliteHandler(satelliteService)
+	satelliteHandler := handlers.NewSatelliteHandler(satelliteService, historyService)
 	historyHandler := handlers.NewHistoryHandler(historyService)
 	legalHandler := handlers.NewLegalHandler()
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"log"
 	"strconv"
 
 	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/dto"
@@ -12,10 +13,14 @@ import (
 
 type SatelliteHandler struct {
 	satelliteService *services.SatelliteService
+	historyService   *services.HistoryService
 }
 
-func NewSatelliteHandler(satelliteService *services.SatelliteService) *SatelliteHandler {
-	return &SatelliteHandler{satelliteService: satelliteService}
+func NewSatelliteHandler(satelliteService *services.SatelliteService, historyService *services.HistoryService) *SatelliteHandler {
+	return &SatelliteHandler{
+		satelliteService: satelliteService,
+		historyService:   historyService,
+	}
 }
 
 func (h *SatelliteHandler) GenerateAnalysis(c *fiber.Ctx) error {
@@ -49,6 +54,11 @@ func (h *SatelliteHandler) GenerateAnalysis(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
 			Error: true, Message: "Analysis failed: " + err.Error(),
 		})
+	}
+
+	// Record analysis to history (non-critical, log failures)
+	if err := h.historyService.RecordAnalysis(userID, coordinateID, "satellite", results); err != nil {
+		log.Printf("Failed to record analysis history: %v", err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{

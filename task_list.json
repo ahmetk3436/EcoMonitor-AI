@@ -16,25 +16,25 @@
       "id": "enhance_002",
       "title": "Add expanded change types and AI analysis summary to satellite data model",
       "description": "The current SatelliteData model at backend/internal/models/satellite_data.go only supports 4 change types (construction, vegetation_loss, water_change, urban_expansion). Expand for real environmental monitoring.\n\nModify file: backend/internal/models/satellite_data.go\n- Add Severity field: Severity string `gorm:\"type:varchar(20);default:'medium'\" json:\"severity\"` (values: low, medium, high, critical)\n- Add AIModel field: AIModel string `gorm:\"type:varchar(50)\" json:\"ai_model\"` to track which model generated the analysis\n- Remove the varchar(50) constraint on ChangeType, change to varchar(100) to support new types: deforestation, pollution, flooding, erosion, wildfire_risk, biodiversity_loss\n- Add Description field: Description string `gorm:\"type:text\" json:\"description\"` for detailed AI-generated analysis text (separate from Summary which is brief)\n\nModify file: backend/internal/dto/satellite_dto.go\n- Add Severity string to SatelliteDataResponse: Severity string `json:\"severity\"`\n- Add AIModel string to SatelliteDataResponse: AIModel string `json:\"ai_model\"`\n- Add Description string to SatelliteDataResponse: Description string `json:\"description\"`\n- Add Severity and Description to AlertResponse struct as well\n\nModify file: backend/internal/services/satellite_service.go\n- Update mapSatelliteToResponse to include Severity, AIModel, Description fields\n- Update GetLatestAlerts query to include satellite_data.severity and satellite_data.description in SELECT\n- Update AlertResponse mapping to include new fields\n\nModify file: mobile/types/satellite.ts\n- Add 'deforestation' | 'pollution' | 'flooding' | 'erosion' | 'wildfire_risk' | 'biodiversity_loss' to ChangeType union\n- Add severity: 'low' | 'medium' | 'high' | 'critical' to SatelliteAlert interface\n- Add description?: string to SatelliteAlert interface\n- Add aiModel?: string to SatelliteAlert interface",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 10,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T18:54:44Z"
+      "updated_at": "2026-02-14T19:04:46Z"
     },
     {
       "id": "enhance_003",
       "title": "Wire history recording into satellite analysis handler",
       "description": "The HistoryService exists but the SatelliteHandler.GenerateAnalysis at backend/internal/handlers/satellite_handler.go line 21 never calls historyService.RecordAnalysis(). Analysis results are generated but never recorded in history, making the history screen always empty unless manually populated.\n\nModify file: backend/internal/handlers/satellite_handler.go\n- Update SatelliteHandler struct to include historyService: type SatelliteHandler struct { satelliteService *services.SatelliteService; historyService *services.HistoryService }\n- Update NewSatelliteHandler: func NewSatelliteHandler(satelliteService *services.SatelliteService, historyService *services.HistoryService) *SatelliteHandler\n- In GenerateAnalysis method, after successful analysis generation (line 30-40), extract userID from JWT context using extractUserID(c), then call h.historyService.RecordAnalysis(userID, coordinateID, \"satellite\", results)\n- Log but don't fail if history recording fails (non-critical path): if err := h.historyService.RecordAnalysis(...); err != nil { log.Printf(\"Failed to record analysis history: %v\", err) }\n- Add 'log' to imports\n\nModify file: backend/cmd/server/main.go\n- Update line 55: satelliteHandler := handlers.NewSatelliteHandler(satelliteService, historyService)\n\nModify file: backend/internal/routes/routes.go\n- No changes needed, handler signature hasn't changed from routes perspective\n\nThis ensures every analysis run is automatically persisted to the history table, making the History tab on mobile actually show real data.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 9,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T19:04:46Z"
     },
     {
       "id": "enhance_004",
