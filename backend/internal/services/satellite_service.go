@@ -1,11 +1,17 @@
 package services
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"math"
-	"math/rand"
+	"net/http"
+	"strings"
 	"time"
 
+	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/config"
 	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/dto"
 	"github.com/ahmetk3436/EcoMonitor-AI/backend/internal/models"
 	"github.com/google/uuid"
@@ -13,57 +19,216 @@ import (
 )
 
 var ErrCoordinateNotFoundForAnalysis = errors.New("coordinate not found")
+var ErrAIServiceNotConfigured = errors.New("AI analysis service not configured")
+
+// OpenAI API request/response types
+
+type openAIRequest struct {
+	Model       string           `json:"model"`
+	Messages    []openAIMessage  `json:"messages"`
+	Temperature float64          `json:"temperature"`
+	MaxTokens   int              `json:"max_tokens"`
+}
+
+type openAIMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type openAIResponse struct {
+	ID      string `json:"id"`
+	Choices []struct {
+		Index   int `json:"index"`
+		Message struct {
+			Role    string `json:"role"`
+			Content string `json:"content"`
+		} `json:"message"`
+		FinishReason string `json:"finish_reason"`
+	} `json:"choices"`
+}
+
+type environmentalChange struct {
+	ChangeType string  `json:"change_type"`
+	Confidence float64 `json:"confidence"`
+	Summary    string  `json:"summary"`
+	DetectedAt string  `json:"detected_at"`
+}
 
 type SatelliteService struct {
-	db *gorm.DB
+	db  *gorm.DB
+	cfg *config.Config
 }
 
-func NewSatelliteService(db *gorm.DB) *SatelliteService {
-	return &SatelliteService{db: db}
+func NewSatelliteService(db *gorm.DB, cfg *config.Config) *SatelliteService {
+	return &SatelliteService{db: db, cfg: cfg}
 }
 
-func (s *SatelliteService) GenerateDummyAnalysis(coordinateID uuid.UUID) ([]dto.SatelliteDataResponse, error) {
-	// Verify coordinate exists
+// AnalyzeCoordinate performs AI-powered environmental analysis for a given coordinate
+func (s *SatelliteService) AnalyzeCoordinate(coordinateID uuid.UUID, userID uuid.UUID) ([]dto.SatelliteDataResponse, error) {
+	if s.cfg.OpenAIAPIKey == "" {
+		return nil, ErrAIServiceNotConfigured
+	}
+
+	// Fetch the coordinate from database
 	var coord models.Coordinate
-	if err := s.db.First(&coord, "id = ?", coordinateID).Error; err != nil {
+	if err := s.db.Where("id = ? AND user_id = ?", coordinateID, userID).First(&coord).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrCoordinateNotFoundForAnalysis
 		}
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch coordinate: %w", err)
 	}
 
-	changeTypes := []string{"construction", "vegetation_loss", "water_change", "urban_expansion"}
-	descriptions := map[string]string{
-		"construction":    "New construction activity detected in the area",
-		"vegetation_loss": "Significant vegetation loss observed",
-		"water_change":    "Water body changes detected",
-		"urban_expansion": "Urban expansion identified",
+	// Determine model based on user subscription
+	model := "gpt-4o-mini"
+	var subscription models.Subscription
+	if err := s.db.Where("user_id = ? AND status = ?", userID, "active").First(&subscription).Error; err == nil {
+		model = "gpt-4o"
 	}
 
-	numEntries := rand.Intn(5) + 1
-	results := make([]dto.SatelliteDataResponse, 0, numEntries)
+	// Build the prompt
+	prompt := fmt.Sprintf(`You are an environmental analysis AI. Analyze the area at latitude %.6f, longitude %.6f (%s). Based on your knowledge of this geographic region, provide a realistic environmental change assessment.
 
-	for i := 0; i < numEntries; i++ {
-		changeType := changeTypes[rand.Intn(len(changeTypes))]
-		confidence := math.Round((0.5+rand.Float64()*0.5)*100) / 100
+Return a JSON array with objects containing:
+- change_type: one of [construction, vegetation_loss, water_change, urban_expansion, deforestation, pollution, flooding, erosion]
+- confidence: a float between 0.0 and 1.0
+- summary: a 2-3 sentence description of the specific change detected at this location
+- detected_at: an ISO8601 date within the last 30 days
+
+Provide 1-4 realistic entries based on what environmental changes are plausible for this region. Return ONLY valid JSON, no markdown formatting or explanation.`, coord.Latitude, coord.Longitude, coord.Label)
+
+	// Call OpenAI API
+	openAIReq := openAIRequest{
+		Model: model,
+		Messages: []openAIMessage{
+			{
+				Role:    "system",
+				Content: "You are an environmental analysis AI that returns only valid JSON arrays. Do not include any text outside the JSON array.",
+			},
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Temperature: 0.7,
+		MaxTokens:   1500,
+	}
+
+	reqBody, err := json.Marshal(openAIReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request: %w", err)
+	}
+
+	httpReq, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(reqBody))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Authorization", "Bearer "+s.cfg.OpenAIAPIKey)
+
+	client := &http.Client{Timeout: 60 * time.Second}
+	httpResp, err := client.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call OpenAI API: %w", err)
+	}
+	defer httpResp.Body.Close()
+
+	if httpResp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(httpResp.Body)
+		return nil, fmt.Errorf("OpenAI API error (status %d): %s", httpResp.StatusCode, string(bodyBytes))
+	}
+
+	var openAIResp openAIResponse
+	if err := json.NewDecoder(httpResp.Body).Decode(&openAIResp); err != nil {
+		return nil, fmt.Errorf("failed to decode OpenAI response: %w", err)
+	}
+
+	if len(openAIResp.Choices) == 0 {
+		return nil, errors.New("no response from OpenAI")
+	}
+
+	// Parse the environmental changes from response
+	content := cleanJSONContent(openAIResp.Choices[0].Message.Content)
+
+	var changes []environmentalChange
+	if err := json.Unmarshal([]byte(content), &changes); err != nil {
+		return nil, fmt.Errorf("failed to parse environmental changes: %w", err)
+	}
+
+	// Validate and create SatelliteData records
+	validChangeTypes := map[string]bool{
+		"construction":    true,
+		"vegetation_loss": true,
+		"water_change":    true,
+		"urban_expansion": true,
+		"deforestation":   true,
+		"pollution":       true,
+		"flooding":        true,
+		"erosion":         true,
+	}
+
+	var results []dto.SatelliteDataResponse
+
+	for _, change := range changes {
+		if !validChangeTypes[change.ChangeType] {
+			continue
+		}
+
+		if change.Confidence < 0.0 || change.Confidence > 1.0 {
+			change.Confidence = 0.5
+		}
+
+		detectedAt, err := time.Parse(time.RFC3339, change.DetectedAt)
+		if err != nil {
+			detectedAt, err = time.Parse("2006-01-02", change.DetectedAt)
+			if err != nil {
+				detectedAt = time.Now().AddDate(0, 0, -1)
+			}
+		}
+
+		thirtyDaysAgo := time.Now().AddDate(0, 0, -30)
+		if detectedAt.Before(thirtyDaysAgo) || detectedAt.After(time.Now()) {
+			detectedAt = time.Now().AddDate(0, 0, -1)
+		}
 
 		satelliteData := models.SatelliteData{
 			CoordinateID: coordinateID,
-			ChangeType:   changeType,
-			Confidence:   confidence,
-			DetectedAt:   time.Now().Add(-time.Duration(rand.Intn(30)) * 24 * time.Hour),
-			ImageURL:     "https://example.com/satellite-image-placeholder.jpg",
-			Summary:      descriptions[changeType],
+			ChangeType:   change.ChangeType,
+			Confidence:   change.Confidence,
+			Summary:      change.Summary,
+			DetectedAt:   detectedAt,
+			ImageURL:     "",
 		}
 
 		if err := s.db.Create(&satelliteData).Error; err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create satellite data: %w", err)
 		}
 
 		results = append(results, mapSatelliteToResponse(&satelliteData))
 	}
 
+	if len(results) == 0 {
+		return nil, errors.New("no valid environmental changes detected for this location")
+	}
+
 	return results, nil
+}
+
+// cleanJSONContent removes markdown code blocks and trims whitespace
+func cleanJSONContent(content string) string {
+	content = strings.TrimSpace(content)
+
+	if strings.HasPrefix(content, "```json") {
+		content = strings.TrimPrefix(content, "```json")
+	} else if strings.HasPrefix(content, "```") {
+		content = strings.TrimPrefix(content, "```")
+	}
+
+	if strings.HasSuffix(content, "```") {
+		content = strings.TrimSuffix(content, "```")
+	}
+
+	return strings.TrimSpace(content)
 }
 
 func (s *SatelliteService) GetAnalysisForCoordinate(coordinateID uuid.UUID, page, limit int) (*dto.PaginatedSatelliteResponse, error) {

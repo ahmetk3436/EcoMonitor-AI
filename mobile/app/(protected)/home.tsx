@@ -49,6 +49,10 @@ const CHANGE_ICONS: Record<string, string> = {
   vegetation_loss: 'leaf',
   water_change: 'water',
   urban_expansion: 'business',
+  deforestation: 'leaf',
+  pollution: 'cloud',
+  flooding: 'rainy',
+  erosion: 'layers',
 };
 
 const CHANGE_COLORS: Record<string, string> = {
@@ -56,6 +60,10 @@ const CHANGE_COLORS: Record<string, string> = {
   vegetation_loss: '#ef4444',
   water_change: '#3b82f6',
   urban_expansion: '#8b5cf6',
+  deforestation: '#22c55e',
+  pollution: '#6b7280',
+  flooding: '#06b6d4',
+  erosion: '#a16207',
 };
 
 // Animated stat card component

@@ -43,7 +43,7 @@ func main() {
 	subscriptionService := services.NewSubscriptionService(database.DB)
 	moderationService := services.NewModerationService(database.DB)
 	coordinateService := services.NewCoordinateService(database.DB)
-	satelliteService := services.NewSatelliteService(database.DB)
+	satelliteService := services.NewSatelliteService(database.DB, cfg)
 	historyService := services.NewHistoryService(database.DB)
 
 	// Handlers

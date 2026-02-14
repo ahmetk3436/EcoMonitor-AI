@@ -24,6 +24,10 @@ const CHANGE_ICONS: Record<ChangeType, keyof typeof Ionicons.glyphMap> = {
   vegetation_loss: 'leaf',
   water_change: 'water',
   urban_expansion: 'business',
+  deforestation: 'leaf',
+  pollution: 'cloud',
+  flooding: 'rainy',
+  erosion: 'layers',
 };
 
 const CHANGE_BORDER_COLORS: Record<string, string> = {
@@ -31,6 +35,10 @@ const CHANGE_BORDER_COLORS: Record<string, string> = {
   vegetation_loss: '#ef4444',
   water_change: '#3b82f6',
   urban_expansion: '#8b5cf6',
+  deforestation: '#22c55e',
+  pollution: '#6b7280',
+  flooding: '#06b6d4',
+  erosion: '#a16207',
 };
 
 const getConfidenceColor = (confidence: number) => {
@@ -110,9 +118,20 @@ export default function AlertsScreen() {
         },
         { text: 'Later', style: 'cancel' },
       ]);
-    } catch {
+    } catch (err: any) {
       hapticError();
-      Alert.alert('Error', 'Analysis failed. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Analysis failed. Please try again.';
+      if (errorMessage.includes('not configured')) {
+        Alert.alert(
+          'Service Unavailable',
+          'AI analysis service is not configured. Please contact support.',
+          [{ text: 'OK' }]
+        );
+      } else if (errorMessage.includes('not found')) {
+        Alert.alert('Not Found', 'Coordinate not found or you don\'t have access to it.');
+      } else {
+        Alert.alert('Analysis Failed', errorMessage);
+      }
     } finally {
       setAnalyzingId(null);
     }

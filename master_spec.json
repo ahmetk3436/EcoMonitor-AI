@@ -1,0 +1,1877 @@
+{
+  "app_name": "CarbonMint",
+  "tagline": "Track your footprint, grow your impact",
+  "description": "A personal carbon footprint tracker that combines manual activity logging with AI-powered estimates to give users a clear, honest picture of their daily environmental impact. Unlike competitors that require hardware or bank connections, CarbonMint works for everyone — any income level, any lifestyle. Gamified challenges and a tree-planting streak system keep users engaged while actually reducing their footprint.",
+  "target_audience": "Environmentally conscious millennials and Gen Z (18-35) who want to reduce their carbon footprint but find existing apps too complex, too exclusive, or too hardware-dependent",
+  "market_research": {
+    "niche": "environmental monitoring carbon footprint",
+    "market_size_estimate": "TAM estimated at $2-3B globally for personal carbon tracking apps by 2026, with SAM of ~$500M for mobile-first solutions. Based on review counts (leading apps have 8,000-9,000 reviews), active user base appears to be in the hundreds of thousands per major app. Growing interest driven by climate awareness and corporate sustainability mandates.",
+    "pain_points": [
+      {
+        "description": "Apps breaking after updates, with poor customer support to resolve issues",
+        "frequency": 7,
+        "severity": 9,
+        "source": "AppStore",
+        "quotes": [
+          "App not working after update!",
+          "New update states iOS ver17 is required. This makes sense useless. Prior to this it was great now it must be replaced.",
+          "Can't tell you what is worse, the product or the customer service."
+        ]
+      },
+      {
+        "description": "Lack of manual input options - users forced into automatic tracking they can't control",
+        "frequency": 6,
+        "severity": 7,
+        "source": "AppStore",
+        "quotes": [
+          "I had been expecting an option to input it manually, which there is not.",
+          "Frustrated not user friendly"
+        ]
+      },
+      {
+        "description": "Apps designed only for wealthy users, excluding lower-income demographics",
+        "frequency": 5,
+        "severity": 6,
+        "source": "AppStore",
+        "quotes": [
+          "Aimed at upper middle class + incomes",
+          "I don't care about the points, I just wanted to track my spending"
+        ]
+      },
+      {
+        "description": "Reward redemption feels scammy or misleading - promised rewards don't materialize as expected",
+        "frequency": 4,
+        "severity": 8,
+        "source": "AppStore",
+        "quotes": [
+          "After you redeem, they change the gift cards to coupons and only one time use a time.",
+          "Scammy app, not worth it"
+        ]
+      },
+      {
+        "description": "Hardware connectivity issues with smart meters and energy monitors",
+        "frequency": 6,
+        "severity": 8,
+        "source": "AppStore",
+        "quotes": [
+          "App refuses to connect to smart meter. Deleted this app. No help from National Grid.",
+          "The app keeps telling me my smart meter needs a software update. Okay, when will that happen, by who and why?"
+        ]
+      },
+      {
+        "description": "Limited ability to take multiple actions at once - restrictive UI flow",
+        "frequency": 4,
+        "severity": 5,
+        "source": "AppStore",
+        "quotes": [
+          "I just really wish we could spend more than one at a time for things like cleaning plastic out of the ocean"
+        ]
+      },
+      {
+        "description": "Uncertainty about legitimacy and accuracy of carbon tracking apps",
+        "frequency": 5,
+        "severity": 6,
+        "source": "Reddit",
+        "quotes": [
+          "Are Carbon Tracking Apps Legit?",
+          "I've been exploring sustainability apps hoping to track carbon emissions and daily impact"
+        ]
+      }
+    ],
+    "feature_requests": [
+      {
+        "name": "Aggregated usage views",
+        "description": "Combined view of energy usage data across multiple sources/timeframes for better analysis",
+        "demand_score": 7,
+        "source": "AppStore (Emporia Energy review)"
+      },
+      {
+        "name": "Customizable data visualization",
+        "description": "Fixed Y-axis options and other graph customization for energy/carbon data",
+        "demand_score": 6,
+        "source": "AppStore (Emporia Energy review)"
+      },
+      {
+        "name": "Manual input option",
+        "description": "Ability to manually log spending and activities instead of only automatic tracking",
+        "demand_score": 8,
+        "source": "AppStore (Commons review)"
+      },
+      {
+        "name": "iPad compatibility",
+        "description": "Full support for iPad devices, not just iPhone",
+        "demand_score": 5,
+        "source": "AppStore (Treecard review)"
+      },
+      {
+        "name": "Real-time carbon tracking",
+        "description": "Live tracking of digital carbon footprint with understandable equivalents (car travel, cups of coffee)",
+        "demand_score": 8,
+        "source": "Reddit discussion"
+      },
+      {
+        "name": "Personalized guidance",
+        "description": "Expert support and tailored recommendations based on individual usage patterns",
+        "demand_score": 9,
+        "source": "Web search (2025-2026 trend analysis)"
+      },
+      {
+        "name": "Automated tracking",
+        "description": "Reduce manual input burden through automatic data collection and calculation",
+        "demand_score": 8,
+        "source": "Web search (leading solutions feature)"
+      }
+    ],
+    "competitors": [
+      {
+        "name": "Treecard",
+        "rating": 4.5,
+        "review_count": 8066,
+        "price_model": "freemium",
+        "strengths": [
+          "Gamification through tree planting rewards",
+          "Strong community engagement (4M+ trees planted)",
+          "Positive emotional connection to environmental impact",
+          "Simple walking-based tracking"
+        ],
+        "weaknesses": [
+          "iPad compatibility issues",
+          "Limited spending options for actions",
+          "Confusing pivot from debit card product"
+        ],
+        "missing_features": [
+          "Comprehensive carbon footprint tracking",
+          "Manual input options",
+          "Detailed analytics"
+        ]
+      },
+      {
+        "name": "Emporia Energy",
+        "rating": 4.8,
+        "review_count": 9047,
+        "price_model": "free",
+        "strengths": [
+          "Excellent data visualization",
+          "Easy hardware installation",
+          "Strong customer service",
+          "Accurate energy monitoring"
+        ],
+        "weaknesses": [
+          "Requires hardware purchase",
+          "Limited aggregation features",
+          "Customization options lacking"
+        ],
+        "missing_features": [
+          "Mobile-only carbon tracking",
+          "Non-energy emission tracking",
+          "Manual activity logging"
+        ]
+      },
+      {
+        "name": "Sense Home",
+        "rating": 4.6,
+        "review_count": 2085,
+        "price_model": "free",
+        "strengths": [
+          "Detailed energy analysis",
+          "Carbon footprint reduction focus",
+          "Smart home integration potential"
+        ],
+        "weaknesses": [
+          "Frequent breaking updates",
+          "Poor customer service",
+          "iOS version requirements causing obsolescence",
+          "Smart meter connectivity issues"
+        ],
+        "missing_features": [
+          "Stable app updates",
+          "Broader device compatibility",
+          "Non-home energy tracking"
+        ]
+      },
+      {
+        "name": "Earth Hero",
+        "rating": 4.9,
+        "review_count": 801,
+        "price_model": "free",
+        "strengths": [
+          "Goal-setting features",
+          "Empowering user experience",
+          "Educational content",
+          "Appeals to all ages including children"
+        ],
+        "weaknesses": [
+          "Smaller user base",
+          "Less sophisticated tracking"
+        ],
+        "missing_features": [
+          "Automated data collection",
+          "Financial integration",
+          "Real-time monitoring"
+        ]
+      },
+      {
+        "name": "Commons",
+        "rating": 4.8,
+        "review_count": 949,
+        "price_model": "freemium",
+        "strengths": [
+          "Spending tracking integration",
+          "Intentional spending prompts",
+          "Clear connection between transactions and impact",
+          "Helpful tips and alternatives"
+        ],
+        "weaknesses": [
+          "Targeted only at upper-middle class",
+          "No manual input option",
+          "Confusing reward redemption",
+          "Perceived as scammy by some users"
+        ],
+        "missing_features": [
+          "Manual spending input",
+          "Lower-income user accessibility",
+          "Transparent reward system"
+        ]
+      },
+      {
+        "name": "Carbon-Tracker",
+        "rating": 5.0,
+        "review_count": 1,
+        "price_model": "free",
+        "strengths": [
+          "Vehicle, gas, and electricity tracking",
+          "Simple focused approach"
+        ],
+        "weaknesses": [
+          "No user base to validate quality",
+          "Limited feature set"
+        ],
+        "missing_features": [
+          "User validation",
+          "Broader tracking categories",
+          "Community features"
+        ]
+      },
+      {
+        "name": "Carbon Footprint Tracker",
+        "rating": 5.0,
+        "review_count": 5,
+        "price_model": "free",
+        "strengths": [
+          "Educational focus on climate change",
+          "Simple interface"
+        ],
+        "weaknesses": [
+          "Very small user base",
+          "Limited reviews for validation"
+        ],
+        "missing_features": [
+          "Proven track record",
+          "Comprehensive features",
+          "Community engagement"
+        ]
+      }
+    ],
+    "market_sentiment": "positive",
+    "market_sentiment_score": 3.8,
+    "trends": [
+      "AI and digital carbon footprint tracking emerging as new concern area",
+      "Real-time carbon monitoring becoming expected feature",
+      "Scope 3 emissions tracking moving from advanced to default requirement",
+      "Automated tracking replacing manual input as user expectation",
+      "Integration of financial transactions with carbon impact analysis",
+      "Gamification through environmental rewards (tree planting, plastic removal)",
+      "Personalized expert guidance becoming differentiator in 2025-2026"
+    ],
+    "monetization_insights": [
+      "Freemium model with premium features (detailed analytics, personalized guidance) is common",
+      "Hardware-software bundle model (Emporia, Sense) provides upfront revenue but limits market",
+      "Reward-based systems can backfire if redemption feels scammy - transparency is critical",
+      "Transaction-linked apps (Commons) can monetize through affiliate partnerships",
+      "Gamification elements (tree planting, badges) increase engagement without direct monetization",
+      "Subscription potential exists for personalized sustainability coaching",
+      "B2B opportunities for corporate sustainability programs"
+    ],
+    "raw_data_summary": "Analyzed 7 competitor apps with combined ~21,000 reviews, revealing a market with strong positive sentiment for gamified environmental apps (Earth Hero 4.9, Emporia 4.8) but significant pain points around app stability, manual input options, and hardware connectivity. Web search and Reddit discussions indicate growing demand for real-time, automated tracking with personalized guidance - a gap in current offerings."
+  },
+  "strategy": {
+    "niche": "environmental monitoring carbon footprint",
+    "opportunities": [
+      {
+        "name": "CarbonMint",
+        "tagline": "Track your footprint, grow your impact",
+        "description": "A personal carbon footprint tracker that combines manual activity logging with AI-powered estimates to give users a clear, honest picture of their daily environmental impact. Unlike competitors that require hardware or bank connections, CarbonMint works for everyone — any income level, any lifestyle. Gamified challenges and a tree-planting streak system keep users engaged while actually reducing their footprint.",
+        "target_audience": "Environmentally conscious millennials and Gen Z (18-35) who want to reduce their carbon footprint but find existing apps too complex, too exclusive, or too hardware-dependent",
+        "core_features": [
+          "Quick-log carbon entries: transport, food, energy, shopping with tap-to-add categories",
+          "AI-powered daily carbon score with relatable equivalents (cups of coffee, km driven, trees needed)",
+          "7-day and 30-day trend charts with category breakdown (Bento grid dashboard)",
+          "Personalized reduction tips based on user's highest-impact categories using on-device analysis",
+          "Green streak counter with loss-aversion messaging and weekly challenges",
+          "Virtual forest that grows with consistent low-carbon days (gamification reward system)",
+          "Share your impact cards — beautiful shareable images of weekly/monthly progress",
+          "Offline-first with local storage, optional cloud backup"
+        ],
+        "differentiator": "No hardware required, no bank account linking, no income bias. Pure manual + smart-estimate tracking that works for anyone, with honest carbon math instead of reward gimmicks that feel scammy. The virtual forest gamification creates emotional investment without misleading reward redemption.",
+        "monetization": "Freemium — Free tier: basic logging, 7-day history, daily score. Premium ($3.99/month or $29.99/year): unlimited history, detailed analytics, personalized AI coaching, custom challenges, export data. No ads ever. Lifetime option at $49.99 for price-sensitive users.",
+        "feasibility": "moderate",
+        "estimated_dev_days": 10,
+        "risk_factors": [
+          "Carbon calculation accuracy could face skepticism — need transparent methodology",
+          "Manual logging fatigue if entry friction is too high",
+          "Competing against free apps with larger user bases (Earth Hero, Treecard)",
+          "ASO competition for 'carbon footprint' keywords is moderate",
+          "User retention depends heavily on gamification loop stickiness"
+        ],
+        "confidence_score": 0.82
+      },
+      {
+        "name": "EcoLens",
+        "tagline": "See the carbon cost of everything",
+        "description": "Point your camera at any product, receipt, or meal and EcoLens estimates its carbon footprint using AI image recognition and a curated emissions database. It transforms abstract carbon numbers into visual, emotional equivalents — making sustainability tangible and shareable. Daily photo logging creates a visual diary of your environmental choices.",
+        "target_audience": "Curious, social-media-savvy Gen Z (16-28) who want to make greener choices but don't want to manually enter data or read spreadsheets",
+        "core_features": [
+          "Camera-based product scanning with AI carbon estimate overlay",
+          "Receipt photo scanning to estimate carbon cost of purchases",
+          "Visual carbon diary — photo timeline of daily choices with impact scores",
+          "Real-time equivalents: 'This meal = 3.2 km of driving' with animated comparisons",
+          "Weekly impact report with beautiful shareable story cards",
+          "Community challenges: 'Low-Carbon Week' with leaderboard",
+          "Personalized swap suggestions based on frequently logged items",
+          "Achievement badges for milestones (100 scans, first carbon-neutral day)"
+        ],
+        "differentiator": "Camera-first UX eliminates manual data entry friction entirely. No competitor offers point-and-scan carbon estimation. The visual diary approach appeals to the Instagram/TikTok generation who think in images, not spreadsheets. Social sharing is native to the experience, not bolted on.",
+        "monetization": "Freemium — Free: 5 scans/day, basic estimates, weekly report. Premium ($4.99/month or $39.99/year): unlimited scans, detailed breakdowns, swap recommendations, community features, export. Free trial: 7 days premium.",
+        "feasibility": "hard",
+        "estimated_dev_days": 18,
+        "risk_factors": [
+          "Camera-based carbon estimation accuracy is inherently approximate — could frustrate detail-oriented users",
+          "Requires building or licensing a product carbon emissions database",
+          "Image recognition for arbitrary products is computationally challenging on-device",
+          "May need server-side AI processing which adds infrastructure cost and latency",
+          "Apple review could question accuracy claims if not properly disclaimed",
+          "Higher development complexity with camera + AI integration"
+        ],
+        "confidence_score": 0.68
+      },
+      {
+        "name": "GreenPulse",
+        "tagline": "Your daily eco check-in, 30 seconds flat",
+        "description": "GreenPulse is a micro-journaling app for sustainability — answer 3-5 quick daily questions about your transport, meals, and energy use, and get an instant eco-score with actionable tips. Designed for busy people who care about the environment but won't spend 10 minutes logging data. The 30-second daily ritual builds awareness without burnout.",
+        "target_audience": "Busy working professionals (25-45) who are environmentally aware but time-poor, and find existing carbon trackers too demanding or complex to maintain daily",
+        "core_features": [
+          "30-second daily check-in: 3-5 contextual tap questions (How did you commute? What did you eat?)",
+          "Instant eco-score (0-100) with color-coded feedback and haptic response",
+          "Smart questions that adapt based on user patterns and day of week",
+          "Weekly pulse report with trend line and biggest impact areas",
+          "Streak tracking with gentle reminders and streak-save option",
+          "Monthly carbon summary with year-over-year comparison",
+          "Quick-action suggestions: one specific thing to improve tomorrow"
+        ],
+        "differentiator": "Radically simple — competitors try to track everything, GreenPulse tracks just enough. The 30-second constraint is the product itself. No bank linking, no hardware, no complex onboarding. It's the Duolingo of carbon tracking: tiny daily habit, big long-term awareness shift.",
+        "monetization": "Freemium — Free: daily check-in, 7-day history, basic score. Premium ($2.99/month or $19.99/year): full history, detailed analytics, monthly reports, custom reminders, data export. Lifetime: $39.99. Low price point matches the minimal-effort value proposition.",
+        "feasibility": "easy",
+        "estimated_dev_days": 7,
+        "risk_factors": [
+          "Oversimplification may frustrate users wanting detailed tracking",
+          "Accuracy of 3-5 question estimates vs comprehensive logging is lower",
+          "Widget feature requires native module (expo-widgets is experimental)",
+          "Risk of being perceived as too basic compared to full carbon trackers",
+          "Daily engagement depends on notification strategy — push notification fatigue"
+        ],
+        "confidence_score": 0.78
+      }
+    ],
+    "selected_opportunity": {
+      "name": "CarbonMint",
+      "tagline": "Track your footprint, grow your impact",
+      "description": "A personal carbon footprint tracker that combines manual activity logging with AI-powered estimates to give users a clear, honest picture of their daily environmental impact. Unlike competitors that require hardware or bank connections, CarbonMint works for everyone — any income level, any lifestyle. Gamified challenges and a tree-planting streak system keep users engaged while actually reducing their footprint.",
+      "target_audience": "Environmentally conscious millennials and Gen Z (18-35) who want to reduce their carbon footprint but find existing apps too complex, too exclusive, or too hardware-dependent",
+      "core_features": [
+        "Quick-log carbon entries: transport, food, energy, shopping with tap-to-add categories",
+        "AI-powered daily carbon score with relatable equivalents (cups of coffee, km driven, trees needed)",
+        "7-day and 30-day trend charts with category breakdown (Bento grid dashboard)",
+        "Personalized reduction tips based on user's highest-impact categories using on-device analysis",
+        "Green streak counter with loss-aversion messaging and weekly challenges",
+        "Virtual forest that grows with consistent low-carbon days (gamification reward system)",
+        "Share your impact cards — beautiful shareable images of weekly/monthly progress",
+        "Offline-first with local storage, optional cloud backup"
+      ],
+      "differentiator": "No hardware required, no bank account linking, no income bias. Pure manual + smart-estimate tracking that works for anyone, with honest carbon math instead of reward gimmicks that feel scammy. The virtual forest gamification creates emotional investment without misleading reward redemption.",
+      "monetization": "Freemium — Free tier: basic logging, 7-day history, daily score. Premium ($3.99/month or $29.99/year): unlimited history, detailed analytics, personalized AI coaching, custom challenges, export data. Lifetime option at $49.99.",
+      "feasibility": "moderate",
+      "estimated_dev_days": 10,
+      "risk_factors": [
+        "Carbon calculation accuracy could face skepticism — need transparent methodology",
+        "Manual logging fatigue if entry friction is too high",
+        "Competing against free apps with larger user bases (Earth Hero, Treecard)",
+        "ASO competition for 'carbon footprint' keywords is moderate",
+        "User retention depends heavily on gamification loop stickiness"
+      ],
+      "confidence_score": 0.82
+    },
+    "rejected_features": [
+      {
+        "feature": "Smart meter / hardware connectivity",
+        "reason": "Requires Bluetooth LE low-level integration and specific hardware protocols. Each smart meter brand has proprietary APIs. Not feasible in React Native without significant native module development, and limits market to hardware owners only."
+      },
+      {
+        "feature": "WidgetKit home screen widgets",
+        "reason": "Expo SDK 54 does not natively support WidgetKit. expo-widgets is experimental and unstable. Would require ejecting from managed workflow or writing native Swift modules. Marked as hard feasibility — could be added post-launch."
+      },
+      {
+        "feature": "Bank transaction auto-import",
+        "reason": "Requires Plaid or similar financial API integration which adds significant compliance burden (PCI-DSS considerations), ongoing costs ($0.30-$1.00 per user/month), and the 'scammy' perception users already complain about in Commons. Also excludes lower-income users who may not want to share financial data."
+      },
+      {
+        "feature": "Real-time energy monitoring",
+        "reason": "Requires continuous hardware connection (smart meter, IoT sensors) which is outside React Native's capability without native modules. Also requires always-on background processing that drains battery and conflicts with iOS background execution limits."
+      },
+      {
+        "feature": "AR-based carbon visualization",
+        "reason": "ARKit integration in React Native is extremely limited. expo-ar is deprecated. While visually impressive, it adds weeks of development for a gimmick feature that doesn't improve core tracking accuracy."
+      },
+      {
+        "feature": "Corporate/B2B team sustainability dashboards",
+        "reason": "While monetization potential exists, B2B features (admin panels, team aggregation, compliance reporting) dramatically increase scope and shift the product away from consumer mobile-first focus. Better as a Phase 2 web dashboard expansion."
+      },
+      {
+        "feature": "Widget showing today's score and streak count",
+        "app": "GreenPulse",
+        "reason": "Not feasible in React Native / Expo SDK 54"
+      }
+    ],
+    "market_positioning": "Position against the three market segments: (1) vs hardware-dependent apps (Emporia, Sense Home) — 'No hardware needed, just your phone'; (2) vs gamification-only apps (Treecard, Earth Hero) — 'Real tracking with honest numbers, not just feel-good points'; (3) vs financial-linking apps (Commons) — 'Works for everyone, no bank account required'. The key insight from market research is that users want accuracy and transparency without complexity or income barriers. Lead with the message: 'Carbon tracking that's honest, simple, and for everyone.' Avoid reward redemption schemes that users perceive as scammy. Instead, use intrinsic motivation (streaks, personal forest growth, visible progress) over extrinsic rewards (gift cards, coupons). Price below Commons/subscription competitors to capture the price-sensitive segment that existing apps alienate."
+  },
+  "design_system": {
+    "colors": [
+      {
+        "name": "primary",
+        "hex": "#00D9A5",
+        "usage": "Primary actions, carbon score highlights, active states"
+      },
+      {
+        "name": "primaryDark",
+        "hex": "#00B386",
+        "usage": "Pressed state, darker variant for depth"
+      },
+      {
+        "name": "secondary",
+        "hex": "#1A3A4A",
+        "usage": "Secondary backgrounds, deep ocean tones"
+      },
+      {
+        "name": "accent",
+        "hex": "#FF7B54",
+        "usage": "CTAs, streak flames, high-impact warnings"
+      },
+      {
+        "name": "background",
+        "hex": "#F8FAF9",
+        "usage": "Light mode main background"
+      },
+      {
+        "name": "surface",
+        "hex": "#FFFFFF",
+        "usage": "Card backgrounds, elevated surfaces"
+      },
+      {
+        "name": "surfaceElevated",
+        "hex": "#F0F5F3",
+        "usage": "Modals, dropdowns, floating elements"
+      },
+      {
+        "name": "textPrimary",
+        "hex": "#1A2E25",
+        "usage": "Primary text, headings, important data"
+      },
+      {
+        "name": "textSecondary",
+        "hex": "#5A6B63",
+        "usage": "Secondary text, captions, metadata"
+      },
+      {
+        "name": "textMuted",
+        "hex": "#8A9A92",
+        "usage": "Disabled text, placeholders, hints"
+      },
+      {
+        "name": "border",
+        "hex": "#D8E5E0",
+        "usage": "Input borders, dividers, separators"
+      },
+      {
+        "name": "success",
+        "hex": "#22C55E",
+        "usage": "Low carbon indicators, positive actions"
+      },
+      {
+        "name": "warning",
+        "hex": "#F59E0B",
+        "usage": "Medium carbon alerts, caution states"
+      },
+      {
+        "name": "error",
+        "hex": "#EF4444",
+        "usage": "High carbon alerts, error states"
+      },
+      {
+        "name": "transport",
+        "hex": "#6366F1",
+        "usage": "Transport category accent"
+      },
+      {
+        "name": "food",
+        "hex": "#F97316",
+        "usage": "Food category accent"
+      },
+      {
+        "name": "energy",
+        "hex": "#EAB308",
+        "usage": "Energy category accent"
+      },
+      {
+        "name": "shopping",
+        "hex": "#EC4899",
+        "usage": "Shopping category accent"
+      },
+      {
+        "name": "forest",
+        "hex": "#059669",
+        "usage": "Virtual forest, tree growth elements"
+      },
+      {
+        "name": "hazeStart",
+        "hex": "#00D9A5",
+        "usage": "AI gradient haze start - mint"
+      },
+      {
+        "name": "hazeMid",
+        "hex": "#0EA5E9",
+        "usage": "AI gradient haze middle - sky"
+      },
+      {
+        "name": "hazeEnd",
+        "hex": "#8B5CF6",
+        "usage": "AI gradient haze end - violet"
+      }
+    ],
+    "typography": [
+      {
+        "name": "displayLarge",
+        "font_size": 36,
+        "font_weight": "bold",
+        "line_height": 1.1
+      },
+      {
+        "name": "displayMedium",
+        "font_size": 28,
+        "font_weight": "bold",
+        "line_height": 1.2
+      },
+      {
+        "name": "heading1",
+        "font_size": 24,
+        "font_weight": "semibold",
+        "line_height": 1.25
+      },
+      {
+        "name": "heading2",
+        "font_size": 20,
+        "font_weight": "semibold",
+        "line_height": 1.3
+      },
+      {
+        "name": "heading3",
+        "font_size": 18,
+        "font_weight": "semibold",
+        "line_height": 1.35
+      },
+      {
+        "name": "bodyLarge",
+        "font_size": 17,
+        "font_weight": "normal",
+        "line_height": 1.5
+      },
+      {
+        "name": "body",
+        "font_size": 15,
+        "font_weight": "normal",
+        "line_height": 1.5
+      },
+      {
+        "name": "bodySmall",
+        "font_size": 14,
+        "font_weight": "normal",
+        "line_height": 1.45
+      },
+      {
+        "name": "caption",
+        "font_size": 12,
+        "font_weight": "medium",
+        "line_height": 1.4
+      },
+      {
+        "name": "micro",
+        "font_size": 10,
+        "font_weight": "medium",
+        "line_height": 1.3
+      },
+      {
+        "name": "numberHero",
+        "font_size": 56,
+        "font_weight": "bold",
+        "line_height": 1.0
+      },
+      {
+        "name": "numberLarge",
+        "font_size": 40,
+        "font_weight": "bold",
+        "line_height": 1.0
+      },
+      {
+        "name": "numberMedium",
+        "font_size": 28,
+        "font_weight": "semibold",
+        "line_height": 1.0
+      }
+    ],
+    "spacing": [
+      {
+        "name": "xs",
+        "value": 4
+      },
+      {
+        "name": "sm",
+        "value": 8
+      },
+      {
+        "name": "md",
+        "value": 12
+      },
+      {
+        "name": "lg",
+        "value": 16
+      },
+      {
+        "name": "xl",
+        "value": 24
+      },
+      {
+        "name": "2xl",
+        "value": 32
+      },
+      {
+        "name": "3xl",
+        "value": 48
+      },
+      {
+        "name": "4xl",
+        "value": 64
+      }
+    ],
+    "components": [
+      {
+        "name": "buttonPrimary",
+        "border_radius": 14,
+        "padding": "px-6 py-4",
+        "shadow": "shadow-lg",
+        "notes": "Min 52px height, haptic on press, scale animation"
+      },
+      {
+        "name": "buttonSecondary",
+        "border_radius": 14,
+        "padding": "px-6 py-4",
+        "shadow": "shadow-sm",
+        "notes": "Ghost style with 1.5px border, min 52px height"
+      },
+      {
+        "name": "buttonCategory",
+        "border_radius": 18,
+        "padding": "p-4",
+        "shadow": "shadow-md",
+        "notes": "Quick-log category, 56x56px touch target"
+      },
+      {
+        "name": "card",
+        "border_radius": 20,
+        "padding": "p-5",
+        "shadow": "shadow-sm",
+        "notes": "Standard content card"
+      },
+      {
+        "name": "cardGlass",
+        "border_radius": 24,
+        "padding": "p-5",
+        "shadow": "shadow-xl",
+        "notes": "Glassmorphism with backdrop-blur-xl, border-white/10"
+      },
+      {
+        "name": "bentoCell",
+        "border_radius": 20,
+        "padding": "p-4",
+        "shadow": "shadow-sm",
+        "notes": "Bento grid dashboard cell"
+      },
+      {
+        "name": "bentoHero",
+        "border_radius": 28,
+        "padding": "p-6",
+        "shadow": "shadow-lg",
+        "notes": "Large bento cell for carbon score with gradient haze"
+      },
+      {
+        "name": "input",
+        "border_radius": 14,
+        "padding": "px-4 py-4",
+        "shadow": "",
+        "notes": "Min 48px height, 1.5px border"
+      },
+      {
+        "name": "chip",
+        "border_radius": 9999,
+        "padding": "px-4 py-2",
+        "shadow": "",
+        "notes": "Category filter chips, min 36px height"
+      },
+      {
+        "name": "modal",
+        "border_radius": 28,
+        "padding": "p-6",
+        "shadow": "shadow-2xl",
+        "notes": "Bottom sheet with drag handle"
+      },
+      {
+        "name": "progressRing",
+        "border_radius": 9999,
+        "padding": "",
+        "shadow": "",
+        "notes": "Circular progress, 8px stroke width"
+      },
+      {
+        "name": "treeElement",
+        "border_radius": 16,
+        "padding": "p-3",
+        "shadow": "shadow-md",
+        "notes": "Virtual forest tree with subtle glow"
+      },
+      {
+        "name": "shareCard",
+        "border_radius": 24,
+        "padding": "p-6",
+        "shadow": "shadow-xl",
+        "notes": "Impact share card with gradient background"
+      },
+      {
+        "name": "streakBadge",
+        "border_radius": 16,
+        "padding": "px-4 py-2",
+        "shadow": "shadow-md",
+        "notes": "Streak counter with flame accent"
+      },
+      {
+        "name": "tipCard",
+        "border_radius": 16,
+        "padding": "p-4",
+        "shadow": "shadow-sm",
+        "notes": "AI-powered reduction tip card"
+      }
+    ],
+    "overall_style": "Eco-Modern Glassmorphism",
+    "dark_mode_palette": [
+      {
+        "name": "background",
+        "hex": "#000000",
+        "usage": "OLED true black background"
+      },
+      {
+        "name": "surface",
+        "hex": "#0D1A14",
+        "usage": "Dark card backgrounds"
+      },
+      {
+        "name": "surfaceElevated",
+        "hex": "#142420",
+        "usage": "Dark elevated surfaces, modals"
+      },
+      {
+        "name": "textPrimary",
+        "hex": "#F0F5F3",
+        "usage": "Dark mode primary text"
+      },
+      {
+        "name": "textSecondary",
+        "hex": "#A3B5AB",
+        "usage": "Dark mode secondary text"
+      },
+      {
+        "name": "textMuted",
+        "hex": "#6B7D74",
+        "usage": "Dark mode muted text"
+      },
+      {
+        "name": "border",
+        "hex": "#1F3A30",
+        "usage": "Dark mode borders"
+      },
+      {
+        "name": "glassTint",
+        "hex": "#1A3A2E",
+        "usage": "Glassmorphism overlay tint"
+      },
+      {
+        "name": "primary",
+        "hex": "#00F5B8",
+        "usage": "Brighter primary for dark contrast"
+      },
+      {
+        "name": "accent",
+        "hex": "#FF8F6B",
+        "usage": "Brighter accent for dark mode"
+      }
+    ],
+    "nativewind_config": {
+      "theme": {
+        "extend": {
+          "colors": {
+            "mint": {
+              "50": "#F0FDF9",
+              "100": "#CCFBEF",
+              "200": "#99F6E0",
+              "300": "#5FEAD0",
+              "400": "#00D9A5",
+              "500": "#00B386",
+              "600": "#008F6A",
+              "700": "#006B50",
+              "800": "#004735",
+              "900": "#00231A"
+            },
+            "carbon": {
+              "transport": "#6366F1",
+              "food": "#F97316",
+              "energy": "#EAB308",
+              "shopping": "#EC4899"
+            },
+            "haze": {
+              "start": "#00D9A5",
+              "mid": "#0EA5E9",
+              "end": "#8B5CF6"
+            }
+          },
+          "borderRadius": {
+            "card": "20px",
+            "modal": "28px",
+            "bento": "20px",
+            "button": "14px"
+          },
+          "boxShadow": {
+            "glass": "0 8px 32px rgba(0, 217, 165, 0.12)",
+            "glow": "0 0 40px rgba(0, 217, 165, 0.25)",
+            "carbon": "0 4px 20px rgba(0, 0, 0, 0.08)",
+            "haze": "0 0 60px rgba(0, 217, 165, 0.3)"
+          },
+          "spacing": {
+            "touch": "44px"
+          }
+        }
+      }
+    },
+    "design_notes": [
+      "AI Gradient Haze: Carbon score hero uses animated gradient (mint→sky→violet) creating living data visualization that pulses subtly",
+      "OLED Deep Dark: True black (#000000) background maximizes OLED battery efficiency and makes mint green visually striking",
+      "Bento Grid: Dashboard uses asymmetric bento layout - hero score cell (2x2), trend charts (2x1), category stats (1x1)",
+      "Glassmorphism: Category selection modal and share cards use backdrop-blur-xl with border-white/10 for frosted effect",
+      "Touch targets: All interactive elements meet 44x44px minimum, category buttons use generous 56x56px",
+      "Haptic-visual sync: Button press, streak milestone, and tree growth trigger synchronized haptic + visual feedback",
+      "Color psychology: Mint evokes freshness/growth, amber accent creates urgency without eco-anxiety",
+      "Number typography: Hero numbers use tabular-nums for alignment, designed for carbon score prominence",
+      "Accessibility: WCAG AA contrast on all text, icons accompany color for category identification",
+      "Virtual forest: Trees scale up with spring animation, particle effects on new tree growth",
+      "Dark mode: Glassmorphism adapts with darker tint, gradient haze becomes more vibrant against black"
+    ]
+  },
+  "ux_architecture": {
+    "screens": [
+      {
+        "name": "index",
+        "route": "app/index.tsx",
+        "description": "Smart router: checks AsyncStorage for onboarding completion, guest usage count, and SecureStore for JWT. Routes to onboarding (first launch), guest-home (not logged in, uses < 3), auth/login (uses exhausted), or (protected)/dashboard (authenticated).",
+        "components": [
+          "ActivityIndicator",
+          "SplashRedirectLogic"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "_layout",
+        "route": "app/_layout.tsx",
+        "description": "Root layout: wraps app in AuthProvider, SubscriptionProvider, StatusBar (light-content), SafeAreaProvider. Uses Slot (NOT Stack). Sets global background to #050505.",
+        "components": [
+          "Slot",
+          "AuthProvider",
+          "SubscriptionProvider",
+          "SafeAreaProvider",
+          "StatusBar"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "onboarding",
+        "route": "app/onboarding.tsx",
+        "description": "3-step horizontal FlatList onboarding. Step 1: 'Track Your Footprint' — animated globe icon with green pulse, headline 'Know your impact in seconds', subtext 'Log meals, rides, and purchases with a single tap'. Step 2: 'Grow Your Forest' — animated tree sprouting, headline 'Every low-carbon day plants a tree', subtext 'Watch your virtual forest thrive as you make greener choices'. Step 3: 'Join the Movement' — share card mockup, headline 'Inspire your circle', subtext 'Share beautiful impact cards and challenge friends', CTA button 'Get Started' (#22C55E). Pagination dots: active #22C55E, inactive #2C2C2E. Skip button top-right on steps 1-2. On complete, sets AsyncStorage 'onboarding_complete' = 'true' and routes to guest-home.",
+        "components": [
+          "FlatList",
+          "Animated.View",
+          "PaginationDots",
+          "SkipButton",
+          "CTAButton"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "guest-home",
+        "route": "app/guest-home.tsx",
+        "description": "Guest landing screen showing app value before sign-up. Displays a sample carbon score card (367g CO₂ today — 'That's 1.5 cups of coffee'), a mini trend chart placeholder, and a prominent 'Log Your First Entry' button (#22C55E). Shows usage badge 'X of 3 free logs remaining' at top. After 3 uses, shows soft paywall modal. Bottom: 'Already have an account? Sign in' link routing to auth/login.",
+        "components": [
+          "SampleScoreCard",
+          "UsageBadge",
+          "CTAButton",
+          "SignInLink",
+          "SoftPaywallModal"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "login",
+        "route": "app/(auth)/login.tsx",
+        "description": "Login screen with dark theme. App logo (leaf icon in #22C55E circle) at top. Email input (placeholder: 'email@example.com') and password input with show/hide toggle. 'Sign In' button full-width (#22C55E bg, #050505 text, font-bold). Divider '— or —'. Apple Sign In button (white outline). Bottom: 'New here? Create account' linking to register. Error state: red (#EF4444) text below inputs.",
+        "components": [
+          "LogoIcon",
+          "TextInput",
+          "PasswordInput",
+          "PrimaryButton",
+          "AppleSignInButton",
+          "ErrorText",
+          "RegisterLink"
+        ],
+        "api_calls": [
+          "POST /api/auth/login",
+          "POST /api/auth/apple"
+        ]
+      },
+      {
+        "name": "register",
+        "route": "app/(auth)/register.tsx",
+        "description": "Registration screen. Same dark theme. Fields: email, password (min 8 chars, strength indicator bar), confirm password. 'Create Account' button (#22C55E). Apple Sign In button below. On success: auto-login (store tokens in SecureStore), haptic success, navigate to (protected)/dashboard. Bottom: 'Already have an account? Sign in' linking to login.",
+        "components": [
+          "TextInput",
+          "PasswordInput",
+          "PasswordStrengthBar",
+          "PrimaryButton",
+          "AppleSignInButton",
+          "SuccessAnimation"
+        ],
+        "api_calls": [
+          "POST /api/auth/register",
+          "POST /api/auth/apple"
+        ]
+      },
+      {
+        "name": "_layout (auth)",
+        "route": "app/(auth)/_layout.tsx",
+        "description": "Auth group layout. Uses Slot. No tab bar. Background #050505.",
+        "components": [
+          "Slot"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "_layout (protected)",
+        "route": "app/(protected)/_layout.tsx",
+        "description": "Protected group layout. Checks isAuthenticated from AuthContext — redirects to auth/login if false. Uses Slot + custom bottom tab bar (4 tabs). Tab bar: bg #0A0A0A, border-top 1px #1C1C1E, height 80px (includes safe area). Active tab: icon + label in #22C55E. Inactive tab: icon + label in #6B7280. Haptic light feedback on tab press.",
+        "components": [
+          "Slot",
+          "CustomTabBar",
+          "Pressable",
+          "Ionicons",
+          "HapticFeedback"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "dashboard",
+        "route": "app/(protected)/dashboard.tsx",
+        "description": "Main dashboard — Bento grid layout. Top section: greeting 'Good morning, {name}' + date. Green streak badge: flame icon + '{N}-day streak 🔥' in #22C55E pill. Bento grid (2-column): Card 1 (full-width): Today's Carbon Score — large number (e.g., '2.4 kg CO₂'), equivalence text ('≈ 12 km driven' or '≈ 8 cups of coffee'), circular progress ring (green-to-red gradient based on score vs daily goal of 6.8kg). Card 2 (half-width): Category Breakdown — mini donut chart with 4 segments: Transport #3B82F6, Food #F59E0B, Energy #8B5CF6, Shopping #EC4899. Card 3 (half-width): Weekly Trend — mini sparkline chart for last 7 days, green line on dark bg. Card 4 (full-width): Reduction Tips — horizontal scroll of 2-3 tip cards with icon + short text ('Switch to bus twice a week → save 3.2 kg'). Bottom: floating '+' FAB button (#22C55E, shadow-lg) that opens quick-log bottom sheet. Pull-to-refresh updates all data.",
+        "components": [
+          "GreetingHeader",
+          "StreakBadge",
+          "BentoGrid",
+          "CarbonScoreCard",
+          "CircularProgress",
+          "DonutChart",
+          "SparklineChart",
+          "TipCard",
+          "ScrollView",
+          "FABButton",
+          "RefreshControl"
+        ],
+        "api_calls": [
+          "GET /api/entries/today",
+          "GET /api/entries/weekly",
+          "GET /api/tips"
+        ]
+      },
+      {
+        "name": "quick-log",
+        "route": "app/(protected)/quick-log.tsx",
+        "description": "Bottom sheet modal for logging a carbon entry. Presented as a bottom sheet (70% screen height) with drag handle. 4 category tabs at top: Transport (car icon, #3B82F6), Food (restaurant icon, #F59E0B), Energy (flash icon, #8B5CF6), Shopping (cart icon, #EC4899). Each category shows a grid of common items as tappable chips: Transport: Car, Bus, Train, Bike, Walk, Flight. Food: Beef, Chicken, Vegetarian, Vegan, Dairy, Seafood. Energy: Heating, AC, Laundry, Cooking, Shower. Shopping: Clothing, Electronics, Groceries, Online Order. On chip tap: haptic medium, slide-up quantity/detail selector (e.g., 'How far? 5km / 10km / 25km / Custom'). CO₂ estimate shown in real-time as user selects (e.g., '+1.2 kg CO₂'). 'Log Entry' button at bottom (#22C55E). Success: haptic success, confetti micro-animation, sheet dismisses, dashboard refreshes.",
+        "components": [
+          "BottomSheet",
+          "CategoryTabs",
+          "ChipGrid",
+          "QuantitySelector",
+          "CO2Estimate",
+          "PrimaryButton",
+          "ConfettiAnimation",
+          "DragHandle"
+        ],
+        "api_calls": [
+          "POST /api/entries"
+        ]
+      },
+      {
+        "name": "forest",
+        "route": "app/(protected)/forest.tsx",
+        "description": "Virtual forest gamification screen. Top: current streak count + best streak. Main area: illustrated forest scene on dark bg — trees rendered as styled SVG/images. Each tree represents a low-carbon day (daily score < 6.8kg goal). Tree stages: seedling (day 1), sapling (day 3), small tree (day 7), full tree (day 14), flowering tree (day 30). Dead/wilted tree for missed days (> 8kg). Forest shows last 30 days as a 5x6 grid of tree icons. Stats bar below: 'Trees Planted: 23', 'Best Streak: 12 days', 'Carbon Saved: 45.2 kg'. Weekly challenge card at bottom: 'This Week: Take public transit 3 times' with progress bar (1/3). Loss-aversion message when streak is active: 'Don't break your {N}-day streak! Log today's entries.' in amber (#F59E0B) if no entry logged yet today.",
+        "components": [
+          "StreakHeader",
+          "ForestGrid",
+          "TreeIcon",
+          "StatsBar",
+          "WeeklyChallengeCard",
+          "ProgressBar",
+          "LossAversionBanner"
+        ],
+        "api_calls": [
+          "GET /api/forest",
+          "GET /api/challenges/current"
+        ]
+      },
+      {
+        "name": "trends",
+        "route": "app/(protected)/trends.tsx",
+        "description": "Detailed analytics screen. Toggle at top: '7 Days' | '30 Days' (pill selector, active #22C55E bg). Main chart: stacked bar chart showing daily CO₂ by category (Transport #3B82F6, Food #F59E0B, Energy #8B5CF6, Shopping #EC4899). Horizontal goal line at 6.8kg (dashed #22C55E). Below chart: category breakdown list — each row has colored dot, category name, total kg, percentage of total, trend arrow (up red/down green vs previous period). Bottom section: 'Your Equivalents This Period' — fun cards: '≈ {N} cups of coffee', '≈ {N} km driven', '≈ {N} trees needed to offset'. Share button at bottom: 'Share Your Impact' (#22C55E outline button) → generates shareable image card.",
+        "components": [
+          "PeriodToggle",
+          "StackedBarChart",
+          "GoalLine",
+          "CategoryBreakdownList",
+          "TrendArrow",
+          "EquivalentCards",
+          "ShareButton"
+        ],
+        "api_calls": [
+          "GET /api/entries/trends?period=7",
+          "GET /api/entries/trends?period=30"
+        ]
+      },
+      {
+        "name": "share-card",
+        "route": "app/(protected)/share-card.tsx",
+        "description": "Shareable impact card generator. Shows a preview of a beautifully designed card (dark bg with green gradient border): App logo top-left, period label ('My Week in Carbon'). Large stat: total CO₂ + trend. Mini chart. Equivalence ('I saved {N} trees worth!'). QR code or app link at bottom. User can toggle period (week/month). 'Share' button uses expo-sharing to share as image. 'Save to Photos' secondary button. Card rendered via ViewShot for image capture.",
+        "components": [
+          "ShareCardPreview",
+          "PeriodToggle",
+          "ViewShot",
+          "ShareButton",
+          "SaveButton",
+          "GradientBorder"
+        ],
+        "api_calls": [
+          "GET /api/entries/trends?period=7"
+        ]
+      },
+      {
+        "name": "settings",
+        "route": "app/(protected)/settings.tsx",
+        "description": "Settings screen. Sections: Profile (avatar placeholder with initials, name, email, edit button). Preferences (daily goal slider: 3-10 kg CO₂, default 6.8kg; units: kg/lbs toggle; notifications: daily reminder toggle + time picker). Data (cloud backup toggle — premium feature with lock icon if free; export data as CSV; clear local data with confirmation). Subscription (current plan badge, 'Upgrade to Pro' button if free → navigates to paywall). Account (Privacy Policy link, Terms of Service link, Sign Out button in #EF4444, Delete Account button in #EF4444 outline with confirmation modal). App version at bottom in #6B7280.",
+        "components": [
+          "ProfileSection",
+          "GoalSlider",
+          "ToggleSwitch",
+          "TimePicker",
+          "SectionList",
+          "SubscriptionBadge",
+          "DeleteAccountModal",
+          "SignOutButton"
+        ],
+        "api_calls": [
+          "GET /api/user/profile",
+          "PUT /api/user/preferences",
+          "DELETE /api/auth/account",
+          "POST /api/auth/logout"
+        ]
+      },
+      {
+        "name": "paywall",
+        "route": "app/(protected)/paywall.tsx",
+        "description": "Contextual paywall screen. Shown after 3 guest uses or when tapping premium features. Dark bg with green gradient glow at top. Headline: 'Unlock Your Full Impact'. Feature comparison: Free (3 logs/day, 7-day trends, basic tips) vs Pro (unlimited logs, 30-day trends, AI coaching, cloud backup, share cards, challenges). Pricing cards: Weekly $2.99 (small text 'most flexible'), Monthly $4.99 (no badge), Annual $39.99 (badge: 'BEST VALUE — save 35%', highlighted border #22C55E). CTA button: 'Start Your Green Journey' (#22C55E). Restore purchases link below. Terms text at bottom. Close X button top-right.",
+        "components": [
+          "GradientGlow",
+          "FeatureComparison",
+          "PricingCard",
+          "CTAButton",
+          "RestorePurchasesLink",
+          "CloseButton"
+        ],
+        "api_calls": []
+      },
+      {
+        "name": "entry-detail",
+        "route": "app/(protected)/entry-detail.tsx",
+        "description": "Detail view for a single carbon entry. Shows category icon + color, item name, quantity, calculated CO₂, timestamp. Edit and delete buttons. Equivalence text for this single entry. Back button to return to previous screen.",
+        "components": [
+          "CategoryIcon",
+          "EntryInfo",
+          "EquivalenceText",
+          "EditButton",
+          "DeleteButton",
+          "BackButton"
+        ],
+        "api_calls": [
+          "GET /api/entries/:id",
+          "PUT /api/entries/:id",
+          "DELETE /api/entries/:id"
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "name": "first_launch",
+        "steps": [
+          "index",
+          "onboarding",
+          "guest-home"
+        ],
+        "description": "First app open: index checks no onboarding flag → routes to onboarding (3 steps) → on complete routes to guest-home where user can try logging entries."
+      },
+      {
+        "name": "guest_usage",
+        "steps": [
+          "guest-home",
+          "quick-log",
+          "guest-home",
+          "paywall"
+        ],
+        "description": "Guest taps 'Log Your First Entry' → quick-log bottom sheet → logs entry → returns to guest-home with updated sample view. After 3 logs, soft paywall modal appears prompting sign-up or purchase."
+      },
+      {
+        "name": "registration",
+        "steps": [
+          "guest-home",
+          "register",
+          "dashboard"
+        ],
+        "description": "Guest taps 'Create Account' from guest-home or paywall → register screen → on success auto-login → navigate to dashboard with all guest entries migrated."
+      },
+      {
+        "name": "login",
+        "steps": [
+          "login",
+          "dashboard"
+        ],
+        "description": "Returning user: index detects no JWT → routes to login → user signs in → navigate to dashboard."
+      },
+      {
+        "name": "daily_logging",
+        "steps": [
+          "dashboard",
+          "quick-log",
+          "dashboard"
+        ],
+        "description": "Primary loop: user taps FAB on dashboard → quick-log bottom sheet opens → select category → select item → set quantity → see CO₂ estimate → tap Log Entry → confetti + haptic → sheet dismisses → dashboard refreshes with new score."
+      },
+      {
+        "name": "check_trends",
+        "steps": [
+          "dashboard",
+          "trends",
+          "share-card"
+        ],
+        "description": "User taps Trends tab → views 7-day or 30-day charts → taps 'Share Your Impact' → share-card screen → customize period → share or save image."
+      },
+      {
+        "name": "forest_engagement",
+        "steps": [
+          "dashboard",
+          "forest"
+        ],
+        "description": "User taps Forest tab → views virtual forest with tree grid → checks streak count → reads weekly challenge → motivated by loss-aversion message if no entry today."
+      },
+      {
+        "name": "settings_management",
+        "steps": [
+          "dashboard",
+          "settings",
+          "paywall"
+        ],
+        "description": "User taps Settings tab → manages profile, preferences, daily goal → taps premium feature (cloud backup) → paywall screen if not subscribed."
+      },
+      {
+        "name": "account_deletion",
+        "steps": [
+          "settings",
+          "login"
+        ],
+        "description": "User in settings → taps Delete Account → confirmation modal with password input → confirms → account deleted → redirected to login."
+      }
+    ],
+    "navigation_type": "custom_tabs",
+    "tab_bar_items": [
+      {
+        "name": "Dashboard",
+        "route": "dashboard",
+        "icon": "leaf",
+        "icon_active": "leaf",
+        "color_active": "#22C55E",
+        "color_inactive": "#6B7280"
+      },
+      {
+        "name": "Forest",
+        "route": "forest",
+        "icon": "tree-outline",
+        "icon_active": "tree",
+        "color_active": "#22C55E",
+        "color_inactive": "#6B7280",
+        "note": "Ionicons does not have 'tree' — use 'leaf-outline'/'leaf' or a custom SVG. Alternative: 'planet-outline'/'planet' for eco theme."
+      },
+      {
+        "name": "Trends",
+        "route": "trends",
+        "icon": "bar-chart-outline",
+        "icon_active": "bar-chart",
+        "color_active": "#22C55E",
+        "color_inactive": "#6B7280"
+      },
+      {
+        "name": "Settings",
+        "route": "settings",
+        "icon": "settings-outline",
+        "icon_active": "settings",
+        "color_active": "#22C55E",
+        "color_inactive": "#6B7280"
+      }
+    ],
+    "mermaid_diagram": "graph TD\n    A[App Launch - index.tsx] -->|First Launch| B[Onboarding 3 Steps]\n    A -->|No JWT + Uses < 3| C[Guest Home]\n    A -->|No JWT + Uses >= 3| D[Login]\n    A -->|Has JWT| E[Dashboard]\n    B --> C\n    C -->|Log Entry| F[Quick-Log Sheet]\n    F -->|Entry Saved| C\n    C -->|3 Uses Exhausted| G[Soft Paywall]\n    G -->|Sign Up| H[Register]\n    G -->|Subscribe| I[Paywall]\n    C -->|Sign In Link| D\n    D -->|Success| E\n    H -->|Auto-Login| E\n    E -->|FAB Tap| J[Quick-Log Sheet]\n    J -->|Entry Saved + Confetti| E\n    E -->|Tab: Forest| K[Forest]\n    E -->|Tab: Trends| L[Trends]\n    E -->|Tab: Settings| M[Settings]\n    L -->|Share Impact| N[Share Card]\n    N -->|Share/Save| L\n    M -->|Premium Feature| I\n    M -->|Sign Out| D\n    M -->|Delete Account| O[Confirm Delete]\n    O -->|Confirmed| D\n    K -->|Weekly Challenge| K\n    I -->|Purchased| E\n\n    style A fill:#050505,stroke:#22C55E,color:#fff\n    style E fill:#0A0A0A,stroke:#22C55E,color:#22C55E\n    style K fill:#0A0A0A,stroke:#4ADE80,color:#4ADE80\n    style L fill:#0A0A0A,stroke:#3B82F6,color:#3B82F6\n    style I fill:#0A0A0A,stroke:#F59E0B,color:#F59E0B\n    style G fill:#0A0A0A,stroke:#F59E0B,color:#F59E0B"
+  },
+  "backend_spec": {
+    "models": [
+      {
+        "name": "User",
+        "table": "users",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "Email": "string;uniqueIndex;not null",
+          "PasswordHash": "string",
+          "AppleUserID": "string;uniqueIndex",
+          "DisplayName": "string;default:''",
+          "AvatarURL": "string;default:''",
+          "IsPremium": "bool;default:false",
+          "PremiumExpiresAt": "*time.Time",
+          "OnboardingCompleted": "bool;default:false",
+          "DailyGoalKg": "float64;default:7.0",
+          "PreferredUnit": "string;default:'kg'",
+          "NotificationsEnabled": "bool;default:true",
+          "StreakReminderHour": "int;default:20",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        }
+      },
+      {
+        "name": "RefreshToken",
+        "table": "refresh_tokens",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "TokenHash": "string;uniqueIndex;not null",
+          "ExpiresAt": "time.Time;not null",
+          "Revoked": "bool;default:false",
+          "CreatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "CarbonEntry",
+        "table": "carbon_entries",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "Category": "string;not null;check:category IN ('transport','food','energy','shopping')",
+          "Subcategory": "string;not null",
+          "CarbonKg": "float64;not null",
+          "Label": "string;not null",
+          "IconName": "string;default:''",
+          "EntryDate": "time.Time;index;not null",
+          "Notes": "string;default:''",
+          "Source": "string;default:'manual'",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User",
+        "indexes": [
+          "idx_user_date ON (user_id, entry_date)"
+        ]
+      },
+      {
+        "name": "DailySummary",
+        "table": "daily_summaries",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;not null",
+          "Date": "time.Time;not null",
+          "TotalCarbonKg": "float64;default:0",
+          "TransportKg": "float64;default:0",
+          "FoodKg": "float64;default:0",
+          "EnergyKg": "float64;default:0",
+          "ShoppingKg": "float64;default:0",
+          "EntryCount": "int;default:0",
+          "CarbonScore": "int;default:0",
+          "ScoreLabel": "string;default:''",
+          "CoffeeEquivalent": "float64;default:0",
+          "KmDrivenEquivalent": "float64;default:0",
+          "TreesNeededEquivalent": "float64;default:0",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User",
+        "indexes": [
+          "idx_user_date_unique UNIQUE ON (user_id, date)"
+        ]
+      },
+      {
+        "name": "Streak",
+        "table": "streaks",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;uniqueIndex;not null",
+          "CurrentStreak": "int;default:0",
+          "LongestStreak": "int;default:0",
+          "LastGreenDate": "*time.Time",
+          "TotalGreenDays": "int;default:0",
+          "StreakFreezes": "int;default:0",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "Challenge",
+        "table": "challenges",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "Title": "string;not null",
+          "Description": "string;not null",
+          "Category": "string;not null",
+          "TargetReductionKg": "float64;not null",
+          "DurationDays": "int;not null",
+          "DifficultyLevel": "string;not null;check:difficulty_level IN ('easy','medium','hard')",
+          "IconName": "string;default:'leaf'",
+          "RewardTreeCount": "int;default:1",
+          "IsActive": "bool;default:true",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        }
+      },
+      {
+        "name": "UserChallenge",
+        "table": "user_challenges",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "ChallengeID": "uuid;not null",
+          "Status": "string;default:'active';check:status IN ('active','completed','failed','abandoned')",
+          "StartDate": "time.Time;not null",
+          "EndDate": "time.Time;not null",
+          "ProgressKg": "float64;default:0",
+          "CompletedAt": "*time.Time",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User; BelongsTo Challenge"
+      },
+      {
+        "name": "VirtualTree",
+        "table": "virtual_trees",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "TreeType": "string;not null;default:'oak'",
+          "GrowthStage": "int;default:0;check:growth_stage BETWEEN 0 AND 5",
+          "PlantedAt": "time.Time;not null",
+          "LastWateredAt": "*time.Time",
+          "PositionX": "float64;default:0",
+          "PositionY": "float64;default:0",
+          "EarnedFrom": "string;default:'streak'",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "ForestStats",
+        "table": "forest_stats",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;uniqueIndex;not null",
+          "TotalTrees": "int;default:0",
+          "MatureTrees": "int;default:0",
+          "TotalCO2SavedKg": "float64;default:0",
+          "ForestLevel": "int;default:1",
+          "ForestName": "string;default:'My Forest'",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "ShareCard",
+        "table": "share_cards",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "ShareToken": "string;uniqueIndex;not null",
+          "CardType": "string;not null;check:card_type IN ('weekly','monthly','streak','forest','challenge')",
+          "PeriodStart": "time.Time;not null",
+          "PeriodEnd": "time.Time;not null",
+          "TotalCarbonKg": "float64;default:0",
+          "ReductionPercent": "float64;default:0",
+          "TopCategory": "string;default:''",
+          "TreesCount": "int;default:0",
+          "StreakDays": "int;default:0",
+          "Payload": "jsonb;default:'{}'",
+          "ViewCount": "int;default:0",
+          "ExpiresAt": "time.Time;not null",
+          "CreatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "CloudBackup",
+        "table": "cloud_backups",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "BackupData": "jsonb;not null",
+          "EntryCount": "int;default:0",
+          "SizeBytes": "int;default:0",
+          "Version": "int;default:1",
+          "DeviceID": "string;default:''",
+          "CreatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "Subscription",
+        "table": "subscriptions",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "UserID": "uuid;index;not null",
+          "RevenueCatID": "string;uniqueIndex",
+          "ProductID": "string;not null",
+          "Status": "string;default:'active';check:status IN ('active','expired','cancelled','billing_retry')",
+          "Platform": "string;default:'ios'",
+          "PurchaseDate": "time.Time;not null",
+          "ExpiresAt": "time.Time;not null",
+          "CancelledAt": "*time.Time",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "relations": "BelongsTo User"
+      },
+      {
+        "name": "Report",
+        "table": "reports",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "ReporterID": "uuid;not null",
+          "ReportedUserID": "uuid;not null",
+          "ReportedContentID": "string;default:''",
+          "ContentType": "string;not null",
+          "Reason": "string;not null",
+          "Description": "string;default:''",
+          "Status": "string;default:'pending';check:status IN ('pending','reviewed','resolved','dismissed')",
+          "AdminNotes": "string;default:''",
+          "CreatedAt": "time.Time",
+          "UpdatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        }
+      },
+      {
+        "name": "Block",
+        "table": "blocks",
+        "fields": {
+          "ID": "uuid;default:gen_random_uuid();primaryKey",
+          "BlockerID": "uuid;not null",
+          "BlockedID": "uuid;not null",
+          "CreatedAt": "time.Time",
+          "DeletedAt": "gorm.DeletedAt;index"
+        },
+        "indexes": [
+          "idx_blocker_blocked UNIQUE ON (blocker_id, blocked_id)"
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/api/health",
+        "description": "Health check returning server status, database connectivity, uptime, and version string. Response: {\"status\":\"ok\",\"database\":\"connected\",\"uptime\":\"12h30m\",\"version\":\"1.0.0\"}",
+        "auth_required": false,
+        "request_body": null,
+        "response_body": "{\"status\":\"ok\",\"database\":\"connected\",\"uptime\":\"string\",\"version\":\"string\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/register",
+        "description": "Register new user with email and password. Password hashed with bcrypt (cost 12). Creates initial Streak and ForestStats records. Returns access token (15min) and refresh token (7d).",
+        "auth_required": false,
+        "request_body": "{\"email\":\"string\",\"password\":\"string\",\"display_name\":\"string\"}",
+        "response_body": "{\"user\":{\"id\":\"uuid\",\"email\":\"string\",\"display_name\":\"string\"},\"access_token\":\"string\",\"refresh_token\":\"string\",\"expires_in\":900}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "description": "Authenticate user with email and password. Returns JWT access token (15min expiry, claims: sub, email, iat, exp) and refresh token (7d). Revokes any existing refresh tokens for the user.",
+        "auth_required": false,
+        "request_body": "{\"email\":\"string\",\"password\":\"string\"}",
+        "response_body": "{\"user\":{\"id\":\"uuid\",\"email\":\"string\",\"display_name\":\"string\",\"is_premium\":false},\"access_token\":\"string\",\"refresh_token\":\"string\",\"expires_in\":900}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/apple",
+        "description": "Sign in with Apple. Validates identity token, creates user if not exists (using Apple user ID), or logs in existing user. Creates initial Streak and ForestStats on first sign-in. Returns tokens.",
+        "auth_required": false,
+        "request_body": "{\"identity_token\":\"string\",\"authorization_code\":\"string\",\"full_name\":\"string|null\",\"email\":\"string|null\"}",
+        "response_body": "{\"user\":{\"id\":\"uuid\",\"email\":\"string\",\"display_name\":\"string\",\"is_premium\":false},\"access_token\":\"string\",\"refresh_token\":\"string\",\"expires_in\":900,\"is_new_user\":false}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "description": "Rotate refresh token. Validates current refresh token, revokes it, issues new access + refresh token pair. Implements token rotation for security.",
+        "auth_required": false,
+        "request_body": "{\"refresh_token\":\"string\"}",
+        "response_body": "{\"access_token\":\"string\",\"refresh_token\":\"string\",\"expires_in\":900}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/logout",
+        "description": "Revoke the current refresh token to sign out. Invalidates the token server-side.",
+        "auth_required": true,
+        "request_body": "{\"refresh_token\":\"string\"}",
+        "response_body": "{\"message\":\"Logged out successfully\"}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/auth/account",
+        "description": "Delete user account and all associated data (Apple Guideline 5.1.1). Requires password confirmation for email users. Soft-deletes user and cascades to all related records. Revokes all tokens.",
+        "auth_required": true,
+        "request_body": "{\"password\":\"string|null\"}",
+        "response_body": "{\"message\":\"Account deleted successfully\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/user/profile",
+        "description": "Get current user profile including premium status, streak info, and forest stats summary.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"id\":\"uuid\",\"email\":\"string\",\"display_name\":\"string\",\"is_premium\":false,\"daily_goal_kg\":7.0,\"preferred_unit\":\"kg\",\"onboarding_completed\":false,\"streak\":{\"current\":0,\"longest\":0,\"total_green_days\":0},\"forest\":{\"total_trees\":0,\"forest_level\":1}}"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/user/profile",
+        "description": "Update user profile settings: display name, daily goal, preferred unit, notification preferences, streak reminder hour.",
+        "auth_required": true,
+        "request_body": "{\"display_name\":\"string|null\",\"daily_goal_kg\":\"float|null\",\"preferred_unit\":\"string|null\",\"notifications_enabled\":\"bool|null\",\"streak_reminder_hour\":\"int|null\"}",
+        "response_body": "{\"id\":\"uuid\",\"email\":\"string\",\"display_name\":\"string\",\"daily_goal_kg\":7.0,\"preferred_unit\":\"kg\",\"notifications_enabled\":true,\"streak_reminder_hour\":20}"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/user/onboarding",
+        "description": "Mark onboarding as completed. Called once after user finishes the 3-step onboarding flow.",
+        "auth_required": true,
+        "request_body": "{\"completed\":true}",
+        "response_body": "{\"onboarding_completed\":true}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/entries",
+        "description": "Log a new carbon entry. Validates category (transport/food/energy/shopping) and subcategory. Automatically recalculates DailySummary for the entry date. Updates streak if the day's total is under the user's daily goal.",
+        "auth_required": true,
+        "request_body": "{\"category\":\"string\",\"subcategory\":\"string\",\"carbon_kg\":0.0,\"label\":\"string\",\"entry_date\":\"2026-02-14\",\"notes\":\"string|null\"}",
+        "response_body": "{\"entry\":{\"id\":\"uuid\",\"category\":\"transport\",\"subcategory\":\"car_short\",\"carbon_kg\":2.3,\"label\":\"Short car trip\",\"entry_date\":\"2026-02-14\",\"created_at\":\"datetime\"},\"daily_summary\":{\"total_carbon_kg\":5.1,\"carbon_score\":72,\"score_label\":\"Good\",\"coffee_equivalent\":25.5,\"km_driven_equivalent\":32.1,\"trees_needed_equivalent\":0.0023}}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/entries",
+        "description": "Get carbon entries for a date range. Query params: start_date (required, YYYY-MM-DD), end_date (required, YYYY-MM-DD), category (optional filter). Returns entries sorted by entry_date DESC, created_at DESC. Max 90 days range.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"entries\":[{\"id\":\"uuid\",\"category\":\"transport\",\"subcategory\":\"car_short\",\"carbon_kg\":2.3,\"label\":\"Short car trip\",\"entry_date\":\"2026-02-14\",\"notes\":\"\",\"created_at\":\"datetime\"}],\"total_count\":15}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/entries/today",
+        "description": "Get all entries for today with the current daily summary and carbon score. Convenience endpoint for the home screen dashboard.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"entries\":[{\"id\":\"uuid\",\"category\":\"food\",\"subcategory\":\"meat_meal\",\"carbon_kg\":3.0,\"label\":\"Meat-based meal\",\"entry_date\":\"2026-02-14\"}],\"summary\":{\"total_carbon_kg\":5.1,\"transport_kg\":2.1,\"food_kg\":3.0,\"energy_kg\":0,\"shopping_kg\":0,\"entry_count\":2,\"carbon_score\":72,\"score_label\":\"Good\",\"coffee_equivalent\":25.5,\"km_driven_equivalent\":32.1,\"trees_needed_equivalent\":0.0023},\"daily_goal_kg\":7.0,\"goal_progress_percent\":72.8}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/entries/:id",
+        "description": "Delete a carbon entry. Soft-deletes the entry and recalculates the DailySummary for that entry's date. Rechecks streak status.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"message\":\"Entry deleted\",\"updated_summary\":{\"total_carbon_kg\":2.1,\"carbon_score\":85,\"score_label\":\"Great\"}}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/entries/categories",
+        "description": "Get all available categories and subcategories with their default carbon_kg values, labels, and icon names. Used to populate the quick-log tap-to-add grid.",
+        "auth_required": false,
+        "request_body": null,
+        "response_body": "{\"categories\":[{\"key\":\"transport\",\"label\":\"Transport\",\"icon\":\"car\",\"color\":\"#3B82F6\",\"subcategories\":[{\"key\":\"car_short\",\"label\":\"Short car trip (<5km)\",\"carbon_kg\":1.2,\"icon\":\"car-outline\"},{\"key\":\"car_medium\",\"label\":\"Medium car trip (5-20km)\",\"carbon_kg\":3.5,\"icon\":\"car\"},{\"key\":\"car_long\",\"label\":\"Long car trip (>20km)\",\"carbon_kg\":7.0,\"icon\":\"car-sport\"},{\"key\":\"bus\",\"label\":\"Bus ride\",\"carbon_kg\":0.5,\"icon\":\"bus\"},{\"key\":\"train\",\"label\":\"Train ride\",\"carbon_kg\":0.3,\"icon\":\"train\"},{\"key\":\"bicycle\",\"label\":\"Bicycle\",\"carbon_kg\":0.0,\"icon\":\"bicycle\"},{\"key\":\"walk\",\"label\":\"Walking\",\"carbon_kg\":0.0,\"icon\":\"walk\"},{\"key\":\"flight_short\",\"label\":\"Short flight (<3h)\",\"carbon_kg\":120.0,\"icon\":\"airplane\"},{\"key\":\"flight_long\",\"label\":\"Long flight (>3h)\",\"carbon_kg\":350.0,\"icon\":\"airplane\"}]},{\"key\":\"food\",\"label\":\"Food\",\"icon\":\"restaurant\",\"color\":\"#22C55E\",\"subcategories\":[{\"key\":\"meat_meal\",\"label\":\"Meat-based meal\",\"carbon_kg\":3.0,\"icon\":\"fast-food\"},{\"key\":\"fish_meal\",\"label\":\"Fish-based meal\",\"carbon_kg\":1.5,\"icon\":\"fish\"},{\"key\":\"vegetarian_meal\",\"label\":\"Vegetarian meal\",\"carbon_kg\":0.8,\"icon\":\"leaf\"},{\"key\":\"vegan_meal\",\"label\":\"Vegan meal\",\"carbon_kg\":0.4,\"icon\":\"nutrition\"},{\"key\":\"coffee\",\"label\":\"Coffee\",\"carbon_kg\":0.2,\"icon\":\"cafe\"},{\"key\":\"dairy\",\"label\":\"Dairy product\",\"carbon_kg\":0.5,\"icon\":\"water\"},{\"key\":\"food_waste\",\"label\":\"Food waste\",\"carbon_kg\":1.0,\"icon\":\"trash\"}]},{\"key\":\"energy\",\"label\":\"Energy\",\"icon\":\"flash\",\"color\":\"#F59E0B\",\"subcategories\":[{\"key\":\"heating_gas\",\"label\":\"Gas heating (1h)\",\"carbon_kg\":1.8,\"icon\":\"flame\"},{\"key\":\"heating_electric\",\"label\":\"Electric heating (1h)\",\"carbon_kg\":0.9,\"icon\":\"thermometer\"},{\"key\":\"ac\",\"label\":\"Air conditioning (1h)\",\"carbon_kg\":0.7,\"icon\":\"snow\"},{\"key\":\"laundry\",\"label\":\"Laundry load\",\"carbon_kg\":0.6,\"icon\":\"water\"},{\"key\":\"dishwasher\",\"label\":\"Dishwasher cycle\",\"carbon_kg\":0.4,\"icon\":\"water\"},{\"key\":\"shower_long\",\"label\":\"Long shower (>10min)\",\"carbon_kg\":0.8,\"icon\":\"water\"},{\"key\":\"shower_short\",\"label\":\"Short shower (<5min)\",\"carbon_kg\":0.3,\"icon\":\"water\"}]},{\"key\":\"shopping\",\"label\":\"Shopping\",\"icon\":\"cart\",\"color\":\"#8B5CF6\",\"subcategories\":[{\"key\":\"clothing_new\",\"label\":\"New clothing item\",\"carbon_kg\":5.0,\"icon\":\"shirt\"},{\"key\":\"clothing_secondhand\",\"label\":\"Secondhand clothing\",\"carbon_kg\":0.5,\"icon\":\"shirt-outline\"},{\"key\":\"electronics_small\",\"label\":\"Small electronics\",\"carbon_kg\":15.0,\"icon\":\"phone-portrait\"},{\"key\":\"electronics_large\",\"label\":\"Large electronics\",\"carbon_kg\":50.0,\"icon\":\"laptop\"},{\"key\":\"groceries_plastic\",\"label\":\"Groceries (with plastic bags)\",\"carbon_kg\":0.8,\"icon\":\"bag\"},{\"key\":\"groceries_reusable\",\"label\":\"Groceries (reusable bags)\",\"carbon_kg\":0.2,\"icon\":\"bag-check\"},{\"key\":\"online_order\",\"label\":\"Online order (delivery)\",\"carbon_kg\":1.5,\"icon\":\"cube\"}]}]}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/summary/daily/:date",
+        "description": "Get daily summary for a specific date (YYYY-MM-DD). Includes category breakdown, carbon score, and equivalents. Returns empty summary if no entries exist for that date.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"date\":\"2026-02-14\",\"total_carbon_kg\":5.1,\"transport_kg\":2.1,\"food_kg\":3.0,\"energy_kg\":0,\"shopping_kg\":0,\"entry_count\":2,\"carbon_score\":72,\"score_label\":\"Good\",\"coffee_equivalent\":25.5,\"km_driven_equivalent\":32.1,\"trees_needed_equivalent\":0.0023,\"daily_goal_kg\":7.0,\"goal_progress_percent\":72.8}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/summary/range",
+        "description": "Get aggregated summary for a date range. Query params: start_date, end_date, granularity (daily|weekly). Returns array of daily/weekly summaries for trend charts. Max 90 days.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"summaries\":[{\"date\":\"2026-02-14\",\"total_carbon_kg\":5.1,\"transport_kg\":2.1,\"food_kg\":3.0,\"energy_kg\":0,\"shopping_kg\":0,\"carbon_score\":72}],\"period_total_kg\":35.7,\"daily_average_kg\":5.1,\"category_breakdown\":{\"transport\":14.7,\"food\":12.0,\"energy\":5.0,\"shopping\":4.0},\"trend_direction\":\"improving\",\"trend_percent\":-8.5}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/streak",
+        "description": "Get current streak status including current streak days, longest streak, total green days, and streak freeze count. Also returns today's status (green/red) and a loss-aversion message if streak is at risk.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"current_streak\":12,\"longest_streak\":21,\"total_green_days\":45,\"streak_freezes\":1,\"last_green_date\":\"2026-02-13\",\"today_status\":\"pending\",\"loss_message\":\"You're on a 12-day streak! Don't break it — log your activities to keep it going.\",\"next_milestone\":14,\"next_milestone_reward\":\"New tree species unlocked\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/streak/freeze",
+        "description": "Use a streak freeze to protect the current streak for one missed day. Premium users get 2 freezes per month. Consumes one freeze from the user's balance.",
+        "auth_required": true,
+        "request_body": "{\"date\":\"2026-02-13\"}",
+        "response_body": "{\"success\":true,\"remaining_freezes\":0,\"current_streak\":12,\"message\":\"Streak freeze applied! Your 12-day streak is safe.\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/challenges",
+        "description": "Get available weekly challenges. Returns active system challenges and the user's current/past challenge participation. Filters out challenges the user has already completed this week.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"available\":[{\"id\":\"uuid\",\"title\":\"Meatless Week\",\"description\":\"Log zero meat meals for 7 consecutive days\",\"category\":\"food\",\"target_reduction_kg\":15.4,\"duration_days\":7,\"difficulty_level\":\"medium\",\"icon_name\":\"leaf\",\"reward_tree_count\":2}],\"active\":[{\"id\":\"uuid\",\"challenge\":{\"title\":\"Meatless Week\"},\"status\":\"active\",\"start_date\":\"2026-02-10\",\"end_date\":\"2026-02-17\",\"progress_kg\":8.2,\"progress_percent\":53.2}],\"completed_count\":5}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/challenges/:id/join",
+        "description": "Join a weekly challenge. Creates a UserChallenge record with active status. User can only have 1 active challenge at a time (free) or 3 (premium).",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"user_challenge\":{\"id\":\"uuid\",\"challenge_id\":\"uuid\",\"status\":\"active\",\"start_date\":\"2026-02-14\",\"end_date\":\"2026-02-21\",\"progress_kg\":0},\"message\":\"Challenge accepted! Complete it to earn 2 new trees.\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/challenges/:id/progress",
+        "description": "Get detailed progress for an active challenge including daily breakdown and projected completion.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"challenge\":{\"title\":\"Meatless Week\",\"target_reduction_kg\":15.4},\"status\":\"active\",\"progress_kg\":8.2,\"progress_percent\":53.2,\"remaining_kg\":7.2,\"days_remaining\":3,\"daily_breakdown\":[{\"date\":\"2026-02-10\",\"reduction_kg\":2.1},{\"date\":\"2026-02-11\",\"reduction_kg\":3.0}],\"on_track\":true}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/forest",
+        "description": "Get the user's virtual forest including all trees, their growth stages, positions, forest level, and overall stats. Forest level increases every 10 trees.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"forest_name\":\"My Forest\",\"forest_level\":3,\"total_trees\":24,\"mature_trees\":18,\"total_co2_saved_kg\":156.8,\"trees\":[{\"id\":\"uuid\",\"tree_type\":\"oak\",\"growth_stage\":5,\"planted_at\":\"2026-01-15\",\"position_x\":0.3,\"position_y\":0.6,\"earned_from\":\"streak\"}],\"next_level_trees\":6,\"available_tree_types\":[\"oak\",\"pine\",\"cherry\",\"maple\",\"birch\"]}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/forest/water",
+        "description": "Water a tree to advance its growth stage. Trees can be watered once per day. Requires the tree to not be at max growth stage (5). Each watering costs 1 green day (auto-deducted if user had a green day today).",
+        "auth_required": true,
+        "request_body": "{\"tree_id\":\"uuid\"}",
+        "response_body": "{\"tree\":{\"id\":\"uuid\",\"tree_type\":\"oak\",\"growth_stage\":4,\"last_watered_at\":\"2026-02-14T10:30:00Z\"},\"message\":\"Your oak tree grew to stage 4!\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/share/create",
+        "description": "Generate a shareable impact card. Creates a ShareCard with a unique token and pre-computed stats for the specified period. Card expires after 30 days. Returns a share URL with the token.",
+        "auth_required": true,
+        "request_body": "{\"card_type\":\"weekly\",\"period_start\":\"2026-02-07\",\"period_end\":\"2026-02-14\"}",
+        "response_body": "{\"share_token\":\"abc123def456\",\"share_url\":\"https://carbonmint.app/share/abc123def456\",\"card_data\":{\"card_type\":\"weekly\",\"total_carbon_kg\":35.7,\"reduction_percent\":12.3,\"top_category\":\"transport\",\"trees_count\":2,\"streak_days\":12,\"period_label\":\"Feb 7 - Feb 14\"},\"expires_at\":\"2026-03-16\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/share/:token",
+        "description": "Get a shared impact card by token. Public endpoint — no auth required. Increments view count. Returns card data for rendering the shareable image.",
+        "auth_required": false,
+        "request_body": null,
+        "response_body": "{\"card_type\":\"weekly\",\"total_carbon_kg\":35.7,\"reduction_percent\":12.3,\"top_category\":\"transport\",\"trees_count\":2,\"streak_days\":12,\"period_label\":\"Feb 7 - Feb 14\",\"display_name\":\"Ahmet\",\"forest_level\":3,\"view_count\":42}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/backup/upload",
+        "description": "Upload a cloud backup of local entries. Premium only. Accepts a JSON blob of all local entries, summaries, and settings. Versioned — keeps last 5 backups per user.",
+        "auth_required": true,
+        "request_body": "{\"backup_data\":{\"entries\":[],\"summaries\":[],\"settings\":{}},\"device_id\":\"string\"}",
+        "response_body": "{\"backup_id\":\"uuid\",\"version\":3,\"entry_count\":156,\"size_bytes\":45200,\"created_at\":\"2026-02-14T10:00:00Z\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/backup/list",
+        "description": "List available cloud backups for the current user. Returns metadata only (not the full backup data). Premium only.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"backups\":[{\"id\":\"uuid\",\"version\":3,\"entry_count\":156,\"size_bytes\":45200,\"device_id\":\"iPhone15,2\",\"created_at\":\"2026-02-14T10:00:00Z\"}]}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/backup/:id",
+        "description": "Download a specific cloud backup by ID. Returns the full backup data blob. Premium only. User can only access their own backups.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"id\":\"uuid\",\"version\":3,\"backup_data\":{\"entries\":[],\"summaries\":[],\"settings\":{}},\"created_at\":\"2026-02-14T10:00:00Z\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/reports",
+        "description": "Report inappropriate content or user behavior (Apple Guideline 1.2). Creates a report for admin review.",
+        "auth_required": true,
+        "request_body": "{\"reported_user_id\":\"uuid\",\"reported_content_id\":\"string|null\",\"content_type\":\"share_card|profile\",\"reason\":\"spam|inappropriate|harassment|other\",\"description\":\"string|null\"}",
+        "response_body": "{\"report_id\":\"uuid\",\"status\":\"pending\",\"message\":\"Report submitted. We'll review it within 24 hours.\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/blocks",
+        "description": "Block a user. Blocked users' share cards will not be visible to the blocker.",
+        "auth_required": true,
+        "request_body": "{\"blocked_user_id\":\"uuid\"}",
+        "response_body": "{\"block_id\":\"uuid\",\"message\":\"User blocked\"}"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/blocks/:id",
+        "description": "Unblock a previously blocked user by block record ID.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"message\":\"User unblocked\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/admin/moderation/reports",
+        "description": "List all content reports for admin moderation. Query params: status (pending|reviewed|resolved|dismissed), page, per_page. Admin-only endpoint.",
+        "auth_required": true,
+        "request_body": null,
+        "response_body": "{\"reports\":[{\"id\":\"uuid\",\"reporter_id\":\"uuid\",\"reported_user_id\":\"uuid\",\"content_type\":\"share_card\",\"reason\":\"inappropriate\",\"description\":\"\",\"status\":\"pending\",\"created_at\":\"datetime\"}],\"total\":5,\"page\":1,\"per_page\":20}"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/admin/moderation/reports/:id",
+        "description": "Take action on a content report. Admin can resolve, dismiss, or mark as reviewed. Optional: ban the reported user or remove the content.",
+        "auth_required": true,
+        "request_body": "{\"status\":\"resolved|dismissed|reviewed\",\"admin_notes\":\"string\",\"action\":\"none|warn|ban|remove_content\"}",
+        "response_body": "{\"report_id\":\"uuid\",\"status\":\"resolved\",\"admin_notes\":\"Content removed\",\"action_taken\":\"remove_content\"}"
+      },
+      {
+        "method": "POST",
+        "path": "/api/webhooks/revenuecat",
+        "description": "RevenueCat webhook handler for subscription events. Validates webhook authorization header. Handles events: INITIAL_PURCHASE, RENEWAL, CANCELLATION, EXPIRATION, BILLING_ISSUE_DETECTED, SUBSCRIBER_ALIAS. Updates User.IsPremium and Subscription record accordingly.",
+        "auth_required": false,
+        "request_body": "{\"api_version\":\"1.0\",\"event\":{\"type\":\"INITIAL_PURCHASE|RENEWAL|CANCELLATION|EXPIRATION|BILLING_ISSUE_DETECTED\",\"app_user_id\":\"uuid\",\"product_id\":\"string\",\"purchased_at_ms\":0,\"expiration_at_ms\":0}}",
+        "response_body": "{\"status\":\"ok\"}"
+      }
+    ],
+    "services": [
+      "AuthService: Handles user registration (bcrypt hashing, cost 12), login, Apple Sign-In (identity token validation via Apple JWKS endpoint at https://appleid.apple.com/auth/keys), JWT generation (access token: 15min, claims: sub/email/iat/exp; refresh token: 7d with SHA-256 hashing), token refresh with rotation (revoke old, issue new pair), logout (revoke refresh token), and account deletion (soft-delete user + cascade all related records). On new user creation, initializes Streak record (all zeros) and ForestStats record (level 1, empty forest).",
+      "CarbonEntryService: Manages CRUD operations for carbon entries. On create/delete, recalculates the DailySummary for the affected date by aggregating all entries for that user+date. Carbon score calculation: score = max(0, 100 - (total_kg / daily_goal_kg * 100)), clamped to 0-100. Score labels: 0-30='High Impact', 31-50='Moderate', 51-70='Fair', 71-85='Good', 86-100='Great'. Equivalents: coffee_equivalent = total_kg / 0.2, km_driven_equivalent = total_kg / 0.159, trees_needed_equivalent = total_kg / 22000 * 365. After summary update, triggers StreakService.EvaluateDay() to check if the day qualifies as a 'green day' (total_kg <= daily_goal_kg).",
+      "DailySummaryService: Handles aggregation of carbon entries into daily summaries. Provides range queries for trend charts (7-day, 30-day). Calculates category breakdowns (transport_kg, food_kg, energy_kg, shopping_kg) by summing entries per category. Trend calculation: compares current period average to previous period average, returns direction (improving/worsening/stable) and percentage change. Supports daily and weekly granularity for chart data.",
+      "StreakService: Manages the green streak system. EvaluateDay(userID, date): checks if the day's total carbon is under the user's daily goal. If yes, updates current_streak++, updates longest_streak if exceeded, sets last_green_date. If no (and no freeze used), resets current_streak to 0. Loss-aversion messaging: generates contextual messages based on streak length ('You're on fire! 7 days strong' for short streaks, 'Don't lose your 21-day streak — that's 3 weeks of green living!' for long streaks). Milestone detection: returns next milestone (7, 14, 21, 30, 50, 100 days) and associated rewards. Streak freeze: premium users get 2 freezes/month, consuming one prevents streak reset for one missed day.",
+      "ChallengeService: Manages weekly challenges. Seeds initial challenges in database on first run. GetAvailable(): returns challenges not yet completed by the user this week. JoinChallenge(): creates UserChallenge with calculated end_date. Progress tracking: after each entry, checks if active challenges are affected (e.g., 'Meatless Week' checks food entries for meat_meal subcategory). CompleteChallenge(): marks as completed, awards trees via ForestService.PlantTree(). Max active challenges: 1 (free), 3 (premium).",
+      "ForestService: Manages the virtual forest gamification system. PlantTree(userID, treeType, earnedFrom): creates a new VirtualTree at growth_stage 0, assigns random position within forest grid, updates ForestStats.TotalTrees. WaterTree(treeID): increments growth_stage (max 5), sets last_watered_at, updates ForestStats.MatureTrees when reaching stage 5. Forest level calculation: level = floor(total_trees / 10) + 1. Available tree types unlock based on milestones: oak (default), pine (5 trees), cherry (10 trees), maple (20 trees), birch (30 trees). CO2 saved tracking: increments total_co2_saved_kg based on actual reduction vs baseline.",
+      "ShareService: Generates shareable impact cards. CreateCard(): computes stats for the specified period (total carbon, reduction vs previous period, top category, tree count, streak days), generates a unique 12-char alphanumeric share token, stores as ShareCard with 30-day expiry. GetCard(): returns card data by token (public), increments view_count. Card types: weekly (7-day summary), monthly (30-day summary), streak (streak achievement), forest (forest snapshot), challenge (challenge completion). Filters out cards from blocked users when listing public cards.",
+      "BackupService: Handles cloud backup for premium users. Upload(): accepts JSON blob of local entries/summaries/settings, stores as CloudBackup record with version number and size tracking. Enforces max 5 backups per user (deletes oldest when exceeded). List(): returns backup metadata without full data. Download(): returns full backup data. Validates user ownership on all operations. Backup data is stored as JSONB in PostgreSQL for efficient querying.",
+      "SubscriptionService: Processes RevenueCat webhook events. INITIAL_PURCHASE: creates Subscription record, sets User.IsPremium=true, sets PremiumExpiresAt. RENEWAL: updates Subscription.ExpiresAt, ensures IsPremium=true. CANCELLATION: sets CancelledAt, keeps IsPremium true until expiration. EXPIRATION: sets User.IsPremium=false, updates Subscription.Status='expired'. BILLING_ISSUE_DETECTED: sets status='billing_retry', keeps premium active for grace period (3 days). Validates webhook authorization header against REVENUECAT_WEBHOOK_SECRET env var.",
+      "ModerationService: Handles content reporting and blocking (Apple Guideline 1.2). CreateReport(): validates reporter != reported, creates Report record. Admin endpoints: ListReports() with status filtering and pagination, ActionReport() with status update and optional user ban/content removal. BlockUser(): creates Block record with unique constraint on blocker+blocked pair. UnblockUser(): soft-deletes Block record. Block checking is used by ShareService to filter share cards."
+    ]
+  },
+  "monetization_model": "Freemium — Free tier: basic logging, 7-day history, daily score. Premium ($3.99/month or $29.99/year): unlimited history, detailed analytics, personalized AI coaching, custom challenges, export data. Lifetime option at $49.99.",
+  "subscription_tiers": [
+    {
+      "name": "Free",
+      "price": "0",
+      "features": [
+        "3 uses/day",
+        "Basic features",
+        "Ads"
+      ]
+    },
+    {
+      "name": "Premium",
+      "price": "$4.99/month",
+      "features": [
+        "Unlimited",
+        "All features",
+        "No ads"
+      ]
+    },
+    {
+      "name": "Annual",
+      "price": "$39.99/year",
+      "features": [
+        "All Premium",
+        "33% savings"
+      ]
+    }
+  ],
+  "tech_stack": {
+    "mobile": "Expo SDK 54 + React Native 0.81 + NativeWind v4 + Expo Router v6",
+    "backend": "Go-Fiber v2 + GORM + PostgreSQL",
+    "auth": "JWT + Sign in with Apple",
+    "payments": "RevenueCat",
+    "deployment": "Coolify PaaS",
+    "ci_cd": "EAS Build + Fastlane"
+  },
+  "apple_compliance": [
+    "4.8 Sign in with Apple",
+    "5.1.1 Account Deletion",
+    "1.2 UGC Safety (Report + Block)",
+    "3.1.1 IAP via RevenueCat",
+    "5.1 Privacy Policy"
+  ],
+  "generated_at": "2026-02-14T12:03:22.734367+00:00",
+  "pipeline_version": "1.0.0"
+}

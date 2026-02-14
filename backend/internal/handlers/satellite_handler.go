@@ -19,6 +19,13 @@ func NewSatelliteHandler(satelliteService *services.SatelliteService) *Satellite
 }
 
 func (h *SatelliteHandler) GenerateAnalysis(c *fiber.Ctx) error {
+	userID, err := extractUserID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(dto.ErrorResponse{
+			Error: true, Message: "Unauthorized",
+		})
+	}
+
 	idStr := c.Params("id")
 	coordinateID, err := uuid.Parse(idStr)
 	if err != nil {
@@ -27,15 +34,20 @@ func (h *SatelliteHandler) GenerateAnalysis(c *fiber.Ctx) error {
 		})
 	}
 
-	results, err := h.satelliteService.GenerateDummyAnalysis(coordinateID)
+	results, err := h.satelliteService.AnalyzeCoordinate(coordinateID, userID)
 	if err != nil {
+		if errors.Is(err, services.ErrAIServiceNotConfigured) {
+			return c.Status(fiber.StatusServiceUnavailable).JSON(dto.ErrorResponse{
+				Error: true, Message: "AI analysis service not configured. Please contact support.",
+			})
+		}
 		if errors.Is(err, services.ErrCoordinateNotFoundForAnalysis) {
 			return c.Status(fiber.StatusNotFound).JSON(dto.ErrorResponse{
-				Error: true, Message: "Coordinate not found",
+				Error: true, Message: "Coordinate not found or you don't have access to it",
 			})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
-			Error: true, Message: "Failed to generate analysis",
+			Error: true, Message: "Analysis failed: " + err.Error(),
 		})
 	}
 
