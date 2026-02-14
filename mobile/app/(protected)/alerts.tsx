@@ -103,6 +103,7 @@ export default function AlertsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [analyzingId, setAnalyzingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<string[]>([]);
 
   const fetchAlerts = async () => {
     try {
@@ -149,48 +150,89 @@ export default function AlertsScreen() {
       return;
     }
 
+    hapticSelection();
     setAnalyzingId(coordinateId);
+
+    // Initialize streaming progress
+    setAnalysisProgress(['Connecting to satellite data...']);
+
+    // Schedule progress updates
+    const timer1 = setTimeout(() => {
+      setAnalysisProgress(prev => [...prev, 'Analyzing land use patterns...']);
+    }, 800);
+
+    const timer2 = setTimeout(() => {
+      setAnalysisProgress(prev => [...prev, 'Detecting environmental changes...']);
+    }, 1600);
+
+    const timer3 = setTimeout(() => {
+      setAnalysisProgress(prev => [...prev, 'Calculating confidence scores...']);
+    }, 2400);
+
     try {
       await api.post(`/coordinates/${coordinateId}/analyze`);
       if (isGuest) {
         await incrementGuestUsage();
       }
-      hapticSuccess();
-      await fetchAlerts();
 
-      if (!isSubscribed && !isGuest) {
-        Alert.alert(
-          'Analysis Complete!',
-          `You found ${alerts.length} environmental changes! Upgrade to Pro for unlimited analyses, CSV exports, and priority alerts.`,
-          [
-            {
-              text: 'Upgrade Now',
-              onPress: () => {
-                hapticSelection();
-                router.push('/(protected)/paywall' as any);
+      // Clear timers and show completion
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+
+      setAnalysisProgress(prev => [...prev, 'Analysis complete!']);
+      hapticSuccess();
+
+      // Clear progress after delay, then fetch updated alerts
+      setTimeout(async () => {
+        setAnalysisProgress([]);
+        setAnalyzingId(null);
+        await fetchAlerts();
+
+        if (!isSubscribed && !isGuest) {
+          Alert.alert(
+            'Analysis Complete!',
+            `You found ${alerts.length} environmental changes! Upgrade to Pro for unlimited analyses, CSV exports, and priority alerts.`,
+            [
+              {
+                text: 'Upgrade Now',
+                onPress: () => {
+                  hapticSelection();
+                  router.push('/(protected)/paywall' as any);
+                },
               },
-            },
+              {
+                text: 'Share Results',
+                onPress: () => shareAnalysisSummary('Location', alerts.length, 75),
+              },
+              {
+                text: 'Later',
+                style: 'cancel',
+                onPress: () => hapticLight(),
+              },
+            ]
+          );
+        } else {
+          Alert.alert('Analysis Complete', 'Share your findings?', [
             {
-              text: 'Share Results',
+              text: 'Share',
               onPress: () => shareAnalysisSummary('Location', alerts.length, 75),
             },
-            {
-              text: 'Later',
-              style: 'cancel',
-              onPress: () => hapticLight(),
-            },
-          ]
-        );
-      } else {
-        Alert.alert('Analysis Complete', 'Share your findings?', [
-          {
-            text: 'Share',
-            onPress: () => shareAnalysisSummary('Location', alerts.length, 75),
-          },
-          { text: 'Later', style: 'cancel' },
-        ]);
-      }
+            { text: 'Later', style: 'cancel' },
+          ]);
+        }
+      }, 1000);
+
     } catch (err: any) {
+      // Clear all pending timers on error
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+
+      // Clear progress state
+      setAnalysisProgress([]);
+      setAnalyzingId(null);
+
       hapticError();
       const errorMessage = err.response?.data?.message || 'Analysis failed. Please try again.';
       if (errorMessage.includes('not configured')) {
@@ -204,8 +246,6 @@ export default function AlertsScreen() {
       } else {
         Alert.alert('Analysis Failed', errorMessage);
       }
-    } finally {
-      setAnalyzingId(null);
     }
   };
 
@@ -374,36 +414,126 @@ export default function AlertsScreen() {
         <Text className="text-3xl font-bold text-white">Alerts</Text>
         <Text className="text-sm text-gray-400 mt-1">Environmental change detection</Text>
       </View>
-      <FlatList
-        data={alerts}
-        renderItem={renderAlertItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingVertical: 16 }}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor="#10b981"
-          />
-        }
-        ListEmptyComponent={
-          <View className="flex-1 justify-center items-center px-8 mt-20">
-            <Ionicons name="earth-outline" size={80} color="#374151" />
-            <Text className="text-xl font-semibold text-white mt-6">No Alerts Yet</Text>
-            <Text className="text-base text-gray-400 mt-2 text-center">
-              Add locations on the map and run satellite analysis to receive environmental change alerts
-            </Text>
-            <Pressable
-              className="rounded-2xl px-8 py-3 mt-6 flex-row items-center"
-              style={{ backgroundColor: '#10b981' }}
-              onPress={() => router.push('/(protected)/map' as any)}
+      <View className="flex-1 relative">
+        <FlatList
+          data={alerts}
+          renderItem={renderAlertItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingVertical: 16 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#10b981"
+            />
+          }
+          ListEmptyComponent={
+            <View className="flex-1 justify-center items-center px-8 mt-20">
+              <Ionicons name="earth-outline" size={80} color="#374151" />
+              <Text className="text-xl font-semibold text-white mt-6">No Alerts Yet</Text>
+              <Text className="text-base text-gray-400 mt-2 text-center">
+                Add locations on the map and run satellite analysis to receive environmental change alerts
+              </Text>
+              <Pressable
+                className="rounded-2xl px-8 py-3 mt-6 flex-row items-center"
+                style={{ backgroundColor: '#10b981' }}
+                onPress={() => router.push('/(protected)/map' as any)}
+              >
+                <Ionicons name="map-outline" size={20} color="white" />
+                <Text className="text-white font-semibold ml-2">Go to Map</Text>
+              </Pressable>
+            </View>
+          }
+        />
+
+        {/* Analysis Progress Modal Overlay */}
+        {analysisProgress.length > 0 && (
+          <View
+            className="absolute inset-0 z-50 justify-center items-center px-8"
+            style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+          >
+            <View
+              className="bg-gray-900 rounded-2xl p-6 w-full border border-gray-800"
+              style={{
+                maxWidth: 340,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.5,
+                shadowRadius: 24,
+                elevation: 12,
+              }}
             >
-              <Ionicons name="map-outline" size={20} color="white" />
-              <Text className="text-white font-semibold ml-2">Go to Map</Text>
-            </Pressable>
+              {/* Modal Header with ActivityIndicator */}
+              <View className="items-center mb-5">
+                <View
+                  className="w-16 h-16 rounded-full items-center justify-center mb-3"
+                  style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)' }}
+                >
+                  <ActivityIndicator size="large" color="#10b981" />
+                </View>
+                <Text className="text-lg font-bold text-white">AI Analysis Running</Text>
+                <Text className="text-sm text-gray-500 mt-1">Processing environmental data</Text>
+              </View>
+
+              {/* Progress Steps List */}
+              <View className="rounded-xl p-4" style={{ backgroundColor: 'rgba(31,41,55,0.5)' }}>
+                {analysisProgress.map((step, index) => {
+                  const isLast = index === analysisProgress.length - 1;
+
+                  return (
+                    <View
+                      key={index}
+                      className="flex-row items-center py-2"
+                      style={{ opacity: isLast ? 1 : 0.8 }}
+                    >
+                      {/* Status Icon */}
+                      <View
+                        className="w-5 h-5 rounded-full items-center justify-center mr-3"
+                        style={{
+                          backgroundColor: isLast
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(16, 185, 129, 0.2)',
+                        }}
+                      >
+                        {isLast ? (
+                          <ActivityIndicator size="small" color="#f59e0b" />
+                        ) : (
+                          <Ionicons name="checkmark" size={12} color="#10b981" />
+                        )}
+                      </View>
+
+                      {/* Step Text */}
+                      <Text
+                        className="text-sm flex-1"
+                        style={{
+                          color: isLast ? '#f59e0b' : '#d1d5db',
+                          fontWeight: isLast ? '600' : '400',
+                        }}
+                      >
+                        {step}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+
+              {/* Animated Dots Indicator */}
+              <View className="flex-row justify-center mt-4">
+                {[0, 1, 2].map((dot) => (
+                  <View
+                    key={dot}
+                    className="w-2 h-2 rounded-full bg-emerald-500"
+                    style={{
+                      opacity: 0.3 + (dot * 0.3),
+                      marginHorizontal: 2,
+                    }}
+                  />
+                ))}
+              </View>
+            </View>
           </View>
-        }
-      />
+        )}
+      </View>
     </SafeAreaView>
   );
 }

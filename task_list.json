@@ -127,13 +127,13 @@
       "id": "enhance_011",
       "title": "Add environmental impact score calculation to home dashboard",
       "description": "The home screen shows basic stats (locations count, alerts count, critical count) but has no meaningful computed metric. Add an 'Environmental Impact Score' that gives users a sense of their monitoring contribution. This replaces the potential for fake/random scoring with a real calculated metric.\n\nModify file: mobile/app/(protected)/home.tsx\n- Add state: const [impactScore, setImpactScore] = useState(0)\n- Calculate impact score in fetchData after getting alerts and coordinates:\n  const locationPoints = coordsRes.data?.coordinates?.length * 10 || 0\n  const alertPoints = alertsRes.data?.alerts?.length * 5 || 0\n  const criticalBonus = (alertsRes.data?.alerts?.filter((a: AlertItem) =\u003e a.confidence \u003e 0.8)?.length || 0) * 15\n  const streakBonus = streakData.currentStreak * 2\n  const score = Math.min(100, locationPoints + alertPoints + criticalBonus + streakBonus)\n  setImpactScore(score)\n- Add Impact Score card ABOVE the stats row (before line 307), after streak card:\n  \u003cView className=\"mx-4 mb-4 rounded-2xl p-4 border-2 border-gray-800\" style={{ backgroundColor: '#111827' }}\u003e\n    \u003cView className=\"flex-row items-center justify-between mb-2\"\u003e\n      \u003cText className=\"text-base font-bold text-white\"\u003eImpact Score\u003c/Text\u003e\n      \u003cView className=\"flex-row items-center\"\u003e\n        \u003cIonicons name=\"trophy\" size={16} color=\"#fbbf24\" /\u003e\n        \u003cText className=\"text-2xl font-bold text-white ml-1\"\u003e{impactScore}\u003c/Text\u003e\n        \u003cText className=\"text-gray-400 text-sm\"\u003e/100\u003c/Text\u003e\n      \u003c/View\u003e\n    \u003c/View\u003e\n    \u003cView className=\"h-2 rounded-full bg-gray-800 overflow-hidden\"\u003e\n      \u003cView className=\"h-full rounded-full\" style={{ width: `${impactScore}%`, backgroundColor: impactScore \u003e 75 ? '#10b981' : impactScore \u003e 40 ? '#f59e0b' : '#ef4444' }} /\u003e\n    \u003c/View\u003e\n    \u003cText className=\"text-xs text-gray-500 mt-2\"\u003eMonitor more locations and maintain your streak to increase your score\u003c/Text\u003e\n  \u003c/View\u003e\n- Move the score calculation to AFTER recordDailyCheck resolves, so streak bonus is included\n- This gives users a gamified reason to return daily and add more monitoring locations",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 6,
       "depends_on": [],
       "test_command": "cd mobile \u0026\u0026 npx tsc --noEmit",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T20:50:32Z"
+      "updated_at": "2026-02-14T20:58:14Z"
     },
     {
       "id": "enhance_012",
@@ -151,13 +151,13 @@
       "id": "enhance_013",
       "title": "Add analysis loading animation with streaming-style progress to alerts screen",
       "description": "When analysis runs (alerts.tsx line 97-118), only a small ActivityIndicator replaces the Analyze button text. For an AI-powered app, the analysis loading experience should feel intelligent with streaming-style progress feedback matching 2025-2026 AI interface trends.\n\nModify file: mobile/app/(protected)/alerts.tsx\n- Add new state: const [analysisProgress, setAnalysisProgress] = useState\u003cstring[]\u003e([])\n- In handleAnalyze, before the API call, simulate AI processing steps with timed messages:\n  setAnalysisProgress(['Connecting to satellite data...'])\n  setTimeout(() =\u003e setAnalysisProgress(prev =\u003e [...prev, 'Analyzing land use patterns...']), 800)\n  setTimeout(() =\u003e setAnalysisProgress(prev =\u003e [...prev, 'Detecting environmental changes...']), 1600)\n  setTimeout(() =\u003e setAnalysisProgress(prev =\u003e [...prev, 'Calculating confidence scores...']), 2400)\n- After API response, add final message and clear after delay:\n  setAnalysisProgress(prev =\u003e [...prev, 'Analysis complete!'])\n  setTimeout(() =\u003e setAnalysisProgress([]), 1000)\n\n- When analysisProgress.length \u003e 0, render a modal overlay above the FlatList:\n  \u003cView className=\"absolute inset-0 bg-black/70 z-50 justify-center items-center px-8\"\u003e\n    \u003cView className=\"bg-gray-900 rounded-2xl p-6 w-full border border-gray-800\"\u003e\n      \u003cView className=\"items-center mb-4\"\u003e\n        \u003cActivityIndicator size=\"large\" color=\"#10b981\" /\u003e\n        \u003cText className=\"text-lg font-bold text-white mt-3\"\u003eAI Analysis Running\u003c/Text\u003e\n      \u003c/View\u003e\n      {analysisProgress.map((step, i) =\u003e (\n        \u003cView key={i} className=\"flex-row items-center mb-2\"\u003e\n          \u003cIonicons name={i === analysisProgress.length - 1 ? 'ellipsis-horizontal' : 'checkmark-circle'} size={16} color={i === analysisProgress.length - 1 ? '#f59e0b' : '#10b981'} /\u003e\n          \u003cText className=\"text-sm text-gray-300 ml-2\" style={i === analysisProgress.length - 1 ? { color: '#f59e0b' } : {}}\u003e{step}\u003c/Text\u003e\n        \u003c/View\u003e\n      ))}\n    \u003c/View\u003e\n  \u003c/View\u003e\n\n- Clear progress on error: in catch block add setAnalysisProgress([])\n- This creates a perceived intelligence for the AI analysis process, reducing user anxiety during the API call wait time.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 6,
       "depends_on": [],
       "test_command": "cd mobile \u0026\u0026 npx tsc --noEmit",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T20:58:14Z"
     }
   ]
 }
