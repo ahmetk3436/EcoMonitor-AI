@@ -14,6 +14,9 @@ type SatelliteDataResponse struct {
 	DetectedAt   time.Time `json:"detected_at"`
 	ImageURL     string    `json:"image_url"`
 	Summary      string    `json:"summary"`
+	Severity     string    `json:"severity"`
+	AIModel      string    `json:"ai_model"`
+	Description  string    `json:"description"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
@@ -34,4 +37,6 @@ type AlertResponse struct {
 	Confidence   float64   `json:"confidence"`
 	DetectedAt   time.Time `json:"detected_at"`
 	Summary      string    `json:"summary"`
+	Severity     string    `json:"severity"`
+	Description  string    `json:"description"`
 }

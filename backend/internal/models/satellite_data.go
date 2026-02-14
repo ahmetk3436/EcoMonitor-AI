@@ -10,11 +10,14 @@ type SatelliteData struct {
 	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	CoordinateID uuid.UUID  `gorm:"type:uuid;not null;index" json:"coordinate_id"`
 	Coordinate   Coordinate `gorm:"foreignKey:CoordinateID" json:"-"`
-	ChangeType   string     `gorm:"type:varchar(50);not null" json:"change_type"`
+	ChangeType   string     `gorm:"type:varchar(100);not null" json:"change_type"`
 	Confidence   float64    `gorm:"not null;check:confidence >= 0 AND confidence <= 1" json:"confidence"`
 	DetectedAt   time.Time  `gorm:"not null" json:"detected_at"`
 	ImageURL     string     `gorm:"type:text" json:"image_url"`
 	Summary      string     `gorm:"type:varchar(1000)" json:"summary"`
+	Severity     string     `gorm:"type:varchar(20);default:'medium'" json:"severity"`
+	AIModel      string     `gorm:"type:varchar(50)" json:"ai_model"`
+	Description  string     `gorm:"type:text" json:"description"`
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at"`
 }

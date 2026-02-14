@@ -88,8 +88,9 @@ func (h *SatelliteHandler) GetLatestAlerts(c *fiber.Ctx) error {
 	}
 
 	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	severity := c.Query("severity")
 
-	alerts, err := h.satelliteService.GetLatestAlerts(userID, limit)
+	alerts, err := h.satelliteService.GetLatestAlerts(userID, limit, severity)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
 			Error: true, Message: "Failed to fetch alerts",

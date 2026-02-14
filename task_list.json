@@ -4,25 +4,25 @@
       "id": "enhance_001",
       "title": "Replace dummy satellite analysis with real AI-powered environmental analysis",
       "description": "The backend satellite_service.go GenerateDummyAnalysis() at line 25 generates 100% FAKE data using math/rand: random change types, random confidence scores (0.5-1.0), random dates, and a placeholder image URL 'https://example.com/satellite-image-placeholder.jpg'. This is the app's core feature and MUST use real AI.\n\nModify file: backend/internal/services/satellite_service.go\n- Add OPENAI_API_KEY to config/config.go: OpenAIAPIKey string, loaded from getEnv(\"OPENAI_API_KEY\", \"\")\n- Replace GenerateDummyAnalysis() with AnalyzeCoordinate(coordinateID uuid.UUID, userID uuid.UUID) that:\n  1. Fetches the coordinate from DB to get lat/lng/label\n  2. Builds a prompt: 'You are an environmental analysis AI. Analyze the area at latitude {lat}, longitude {lng} ({label}). Based on your knowledge of this geographic region, provide a realistic environmental change assessment. Return JSON array with objects containing: change_type (one of: construction, vegetation_loss, water_change, urban_expansion, deforestation, pollution, flooding, erosion), confidence (0.0-1.0), summary (2-3 sentence description of the specific change detected at this location), detected_at (ISO8601 date within last 30 days). Provide 1-4 realistic entries based on what environmental changes are plausible for this region.'\n  3. Calls OpenAI API: POST https://api.openai.com/v1/chat/completions with model 'gpt-4o-mini' (free tier) or 'gpt-4o' (premium - check subscription), temperature 0.7, max_tokens 1500\n  4. Parses the JSON response, validates each entry, creates SatelliteData records in DB\n  5. Sets ImageURL to empty string (remove placeholder URL entirely)\n- Add new import: 'net/http', 'encoding/json', 'bytes', 'io'\n- Add OpenAI request/response structs in the service file\n- Update SatelliteService struct to hold config: type SatelliteService struct { db *gorm.DB; cfg *config.Config }\n- Update NewSatelliteService signature: func NewSatelliteService(db *gorm.DB, cfg *config.Config) *SatelliteService\n- Update main.go line 46: satelliteService := services.NewSatelliteService(database.DB, cfg)\n- Update satellite_handler.go GenerateAnalysis to call AnalyzeCoordinate instead of GenerateDummyAnalysis, passing userID from JWT\n- If OPENAI_API_KEY is empty, return error response 'AI analysis service not configured' instead of generating fake data",
+      "status": "completed",
+      "priority": 10,
+      "depends_on": [],
+      "test_command": "cd backend \u0026\u0026 go build ./...",
+      "auto_commit": true,
+      "created_at": "",
+      "updated_at": "2026-02-14T18:54:44Z"
+    },
+    {
+      "id": "enhance_002",
+      "title": "Add expanded change types and AI analysis summary to satellite data model",
+      "description": "The current SatelliteData model at backend/internal/models/satellite_data.go only supports 4 change types (construction, vegetation_loss, water_change, urban_expansion). Expand for real environmental monitoring.\n\nModify file: backend/internal/models/satellite_data.go\n- Add Severity field: Severity string `gorm:\"type:varchar(20);default:'medium'\" json:\"severity\"` (values: low, medium, high, critical)\n- Add AIModel field: AIModel string `gorm:\"type:varchar(50)\" json:\"ai_model\"` to track which model generated the analysis\n- Remove the varchar(50) constraint on ChangeType, change to varchar(100) to support new types: deforestation, pollution, flooding, erosion, wildfire_risk, biodiversity_loss\n- Add Description field: Description string `gorm:\"type:text\" json:\"description\"` for detailed AI-generated analysis text (separate from Summary which is brief)\n\nModify file: backend/internal/dto/satellite_dto.go\n- Add Severity string to SatelliteDataResponse: Severity string `json:\"severity\"`\n- Add AIModel string to SatelliteDataResponse: AIModel string `json:\"ai_model\"`\n- Add Description string to SatelliteDataResponse: Description string `json:\"description\"`\n- Add Severity and Description to AlertResponse struct as well\n\nModify file: backend/internal/services/satellite_service.go\n- Update mapSatelliteToResponse to include Severity, AIModel, Description fields\n- Update GetLatestAlerts query to include satellite_data.severity and satellite_data.description in SELECT\n- Update AlertResponse mapping to include new fields\n\nModify file: mobile/types/satellite.ts\n- Add 'deforestation' | 'pollution' | 'flooding' | 'erosion' | 'wildfire_risk' | 'biodiversity_loss' to ChangeType union\n- Add severity: 'low' | 'medium' | 'high' | 'critical' to SatelliteAlert interface\n- Add description?: string to SatelliteAlert interface\n- Add aiModel?: string to SatelliteAlert interface",
       "status": "in_progress",
       "priority": 10,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T18:41:53Z"
-    },
-    {
-      "id": "enhance_002",
-      "title": "Add expanded change types and AI analysis summary to satellite data model",
-      "description": "The current SatelliteData model at backend/internal/models/satellite_data.go only supports 4 change types (construction, vegetation_loss, water_change, urban_expansion). Expand for real environmental monitoring.\n\nModify file: backend/internal/models/satellite_data.go\n- Add Severity field: Severity string `gorm:\"type:varchar(20);default:'medium'\" json:\"severity\"` (values: low, medium, high, critical)\n- Add AIModel field: AIModel string `gorm:\"type:varchar(50)\" json:\"ai_model\"` to track which model generated the analysis\n- Remove the varchar(50) constraint on ChangeType, change to varchar(100) to support new types: deforestation, pollution, flooding, erosion, wildfire_risk, biodiversity_loss\n- Add Description field: Description string `gorm:\"type:text\" json:\"description\"` for detailed AI-generated analysis text (separate from Summary which is brief)\n\nModify file: backend/internal/dto/satellite_dto.go\n- Add Severity string to SatelliteDataResponse: Severity string `json:\"severity\"`\n- Add AIModel string to SatelliteDataResponse: AIModel string `json:\"ai_model\"`\n- Add Description string to SatelliteDataResponse: Description string `json:\"description\"`\n- Add Severity and Description to AlertResponse struct as well\n\nModify file: backend/internal/services/satellite_service.go\n- Update mapSatelliteToResponse to include Severity, AIModel, Description fields\n- Update GetLatestAlerts query to include satellite_data.severity and satellite_data.description in SELECT\n- Update AlertResponse mapping to include new fields\n\nModify file: mobile/types/satellite.ts\n- Add 'deforestation' | 'pollution' | 'flooding' | 'erosion' | 'wildfire_risk' | 'biodiversity_loss' to ChangeType union\n- Add severity: 'low' | 'medium' | 'high' | 'critical' to SatelliteAlert interface\n- Add description?: string to SatelliteAlert interface\n- Add aiModel?: string to SatelliteAlert interface",
-      "status": "pending",
-      "priority": 10,
-      "depends_on": [],
-      "test_command": "cd backend \u0026\u0026 go build ./...",
-      "auto_commit": true,
-      "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T18:54:44Z"
     },
     {
       "id": "enhance_003",

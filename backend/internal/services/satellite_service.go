@@ -48,10 +48,12 @@ type openAIResponse struct {
 }
 
 type environmentalChange struct {
-	ChangeType string  `json:"change_type"`
-	Confidence float64 `json:"confidence"`
-	Summary    string  `json:"summary"`
-	DetectedAt string  `json:"detected_at"`
+	ChangeType  string  `json:"change_type"`
+	Confidence  float64 `json:"confidence"`
+	Summary     string  `json:"summary"`
+	Severity    string  `json:"severity"`
+	Description string  `json:"description"`
+	DetectedAt  string  `json:"detected_at"`
 }
 
 type SatelliteService struct {
@@ -89,9 +91,11 @@ func (s *SatelliteService) AnalyzeCoordinate(coordinateID uuid.UUID, userID uuid
 	prompt := fmt.Sprintf(`You are an environmental analysis AI. Analyze the area at latitude %.6f, longitude %.6f (%s). Based on your knowledge of this geographic region, provide a realistic environmental change assessment.
 
 Return a JSON array with objects containing:
-- change_type: one of [construction, vegetation_loss, water_change, urban_expansion, deforestation, pollution, flooding, erosion]
+- change_type: one of [construction, vegetation_loss, water_change, urban_expansion, deforestation, pollution, flooding, erosion, wildfire_risk, biodiversity_loss]
 - confidence: a float between 0.0 and 1.0
 - summary: a 2-3 sentence description of the specific change detected at this location
+- severity: one of [low, medium, high, critical] indicating the urgency level
+- description: a detailed paragraph (3-5 sentences) with in-depth analysis of the environmental change, its causes, and potential impacts
 - detected_at: an ISO8601 date within the last 30 days
 
 Provide 1-4 realistic entries based on what environmental changes are plausible for this region. Return ONLY valid JSON, no markdown formatting or explanation.`, coord.Latitude, coord.Longitude, coord.Label)
@@ -157,14 +161,23 @@ Provide 1-4 realistic entries based on what environmental changes are plausible 
 
 	// Validate and create SatelliteData records
 	validChangeTypes := map[string]bool{
-		"construction":    true,
-		"vegetation_loss": true,
-		"water_change":    true,
-		"urban_expansion": true,
-		"deforestation":   true,
-		"pollution":       true,
-		"flooding":        true,
-		"erosion":         true,
+		"construction":     true,
+		"vegetation_loss":  true,
+		"water_change":     true,
+		"urban_expansion":  true,
+		"deforestation":    true,
+		"pollution":        true,
+		"flooding":         true,
+		"erosion":          true,
+		"wildfire_risk":    true,
+		"biodiversity_loss": true,
+	}
+
+	validSeverities := map[string]bool{
+		"low":      true,
+		"medium":   true,
+		"high":     true,
+		"critical": true,
 	}
 
 	var results []dto.SatelliteDataResponse
@@ -191,11 +204,20 @@ Provide 1-4 realistic entries based on what environmental changes are plausible 
 			detectedAt = time.Now().AddDate(0, 0, -1)
 		}
 
+		// Validate and default severity
+		severity := change.Severity
+		if !validSeverities[severity] {
+			severity = "medium"
+		}
+
 		satelliteData := models.SatelliteData{
 			CoordinateID: coordinateID,
 			ChangeType:   change.ChangeType,
 			Confidence:   change.Confidence,
 			Summary:      change.Summary,
+			Severity:     severity,
+			AIModel:      model,
+			Description:  change.Description,
 			DetectedAt:   detectedAt,
 			ImageURL:     "",
 		}
@@ -268,7 +290,7 @@ func (s *SatelliteService) GetAnalysisForCoordinate(coordinateID uuid.UUID, page
 	}, nil
 }
 
-func (s *SatelliteService) GetLatestAlerts(userID uuid.UUID, limit int) ([]dto.AlertResponse, error) {
+func (s *SatelliteService) GetLatestAlerts(userID uuid.UUID, limit int, severityFilter string) ([]dto.AlertResponse, error) {
 	if limit < 1 || limit > 50 {
 		limit = 10
 	}
@@ -280,15 +302,22 @@ func (s *SatelliteService) GetLatestAlerts(userID uuid.UUID, limit int) ([]dto.A
 		Confidence   float64
 		DetectedAt   time.Time
 		Summary      string
+		Severity     string
+		Description  string
 		Latitude     float64
 		Longitude    float64
 	}
 
-	err := s.db.Table("satellite_data").
-		Select("satellite_data.id, satellite_data.coordinate_id, satellite_data.change_type, satellite_data.confidence, satellite_data.detected_at, satellite_data.summary, coordinates.latitude, coordinates.longitude").
+	query := s.db.Table("satellite_data").
+		Select("satellite_data.id, satellite_data.coordinate_id, satellite_data.change_type, satellite_data.confidence, satellite_data.detected_at, satellite_data.summary, satellite_data.severity, satellite_data.description, coordinates.latitude, coordinates.longitude").
 		Joins("JOIN coordinates ON satellite_data.coordinate_id = coordinates.id").
-		Where("coordinates.user_id = ? AND coordinates.deleted_at IS NULL", userID).
-		Order("satellite_data.detected_at DESC").
+		Where("coordinates.user_id = ? AND coordinates.deleted_at IS NULL", userID)
+
+	if severityFilter != "" && severityFilter != "all" {
+		query = query.Where("satellite_data.severity = ?", severityFilter)
+	}
+
+	err := query.Order("satellite_data.detected_at DESC").
 		Limit(limit).
 		Find(&results).Error
 
@@ -307,6 +336,8 @@ func (s *SatelliteService) GetLatestAlerts(userID uuid.UUID, limit int) ([]dto.A
 			Confidence:   r.Confidence,
 			DetectedAt:   r.DetectedAt,
 			Summary:      r.Summary,
+			Severity:     r.Severity,
+			Description:  r.Description,
 		}
 	}
 
@@ -322,6 +353,9 @@ func mapSatelliteToResponse(data *models.SatelliteData) dto.SatelliteDataRespons
 		DetectedAt:   data.DetectedAt,
 		ImageURL:     data.ImageURL,
 		Summary:      data.Summary,
+		Severity:     data.Severity,
+		AIModel:      data.AIModel,
+		Description:  data.Description,
 		CreatedAt:    data.CreatedAt,
 	}
 }
