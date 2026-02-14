@@ -8,14 +8,18 @@ import {
   ScrollView,
   RefreshControl,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { shareAsync } from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../contexts/SubscriptionContext';
 import { isBiometricAvailable, getBiometricType } from '../../lib/biometrics';
-import { hapticWarning, hapticMedium, hapticLight, hapticSelection } from '../../lib/haptics';
+import { hapticWarning, hapticMedium, hapticLight, hapticSelection, hapticSuccess, hapticError } from '../../lib/haptics';
+import api from '../../lib/api';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import Input from '../../components/ui/Input';
@@ -76,6 +80,7 @@ export default function SettingsScreen() {
   const [deletePassword, setDeletePassword] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     checkBiometrics();
@@ -126,6 +131,77 @@ export default function SettingsScreen() {
       success ? 'Success' : 'Not Found',
       success ? 'Purchases restored!' : 'No previous purchases found.'
     );
+  };
+
+  const handleExportData = async () => {
+    if (!isSubscribed) {
+      Alert.alert(
+        'Premium Feature',
+        'CSV export is available for Premium subscribers only. Would you like to upgrade?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Upgrade', onPress: () => router.push('/(protected)/paywall' as any) },
+        ]
+      );
+      return;
+    }
+
+    setIsExporting(true);
+
+    try {
+      const response = await api.get('/export/csv', {
+        responseType: 'blob',
+      });
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      const fileName = `ecomonitor-export-${timestamp}.csv`;
+      const filePath = `${FileSystem.cacheDirectory}${fileName}`;
+
+      const blobData = response.data as Blob;
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result as string;
+          const base64Content = result.split(',')[1];
+          resolve(base64Content);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blobData);
+      });
+
+      await FileSystem.writeAsStringAsync(filePath, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      hapticSuccess();
+
+      await shareAsync(filePath, {
+        mimeType: 'text/csv',
+        dialogTitle: 'Export EcoMonitor Data',
+        UTI: 'public.comma-separated-values-text',
+      });
+    } catch (error: any) {
+      hapticError();
+
+      if (error.response?.data?.code === 'PREMIUM_REQUIRED') {
+        Alert.alert(
+          'Premium Required',
+          'CSV export is a premium feature. Upgrade to export your environmental monitoring data.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Upgrade', onPress: () => router.push('/(protected)/paywall' as any) },
+          ]
+        );
+      } else {
+        Alert.alert(
+          'Export Failed',
+          'Unable to export your data. Please check your connection and try again.',
+          [{ text: 'OK' }]
+        );
+      }
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (isGuest) {
@@ -249,6 +325,24 @@ export default function SettingsScreen() {
             sublabel={user?.email}
             onPress={() => {}}
             showChevron={false}
+          />
+          <View style={{ height: 1, backgroundColor: '#1f2937', marginHorizontal: 16 }} />
+          <SettingRow
+            icon="download-outline"
+            iconColor="#0D9488"
+            label="Export Data"
+            sublabel={isSubscribed ? 'Download your monitoring data' : 'Premium only'}
+            onPress={handleExportData}
+            showChevron={!isExporting && isSubscribed}
+            rightElement={
+              isExporting ? (
+                <ActivityIndicator size="small" color="#0D9488" />
+              ) : !isSubscribed ? (
+                <View className="bg-amber-900/30 px-2 py-1 rounded-md">
+                  <Text className="text-xs font-semibold text-amber-400">PRO</Text>
+                </View>
+              ) : undefined
+            }
           />
         </View>
 

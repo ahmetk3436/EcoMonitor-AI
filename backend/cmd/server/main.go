@@ -45,6 +45,7 @@ func main() {
 	coordinateService := services.NewCoordinateService(database.DB)
 	satelliteService := services.NewSatelliteService(database.DB, cfg)
 	historyService := services.NewHistoryService(database.DB)
+	exportService := services.NewExportService(database.DB)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authService)
@@ -55,6 +56,7 @@ func main() {
 	satelliteHandler := handlers.NewSatelliteHandler(satelliteService, historyService)
 	historyHandler := handlers.NewHistoryHandler(historyService)
 	legalHandler := handlers.NewLegalHandler()
+	exportHandler := handlers.NewExportHandler(exportService, database.DB)
 
 	// Fiber app
 	app := fiber.New(fiber.Config{
@@ -79,7 +81,7 @@ func main() {
 	app.Use("/api/auth", authLimiter)
 
 	// Routes
-	routes.Setup(app, cfg, database.DB, authHandler, healthHandler, webhookHandler, moderationHandler, coordinateHandler, satelliteHandler, historyHandler, legalHandler)
+	routes.Setup(app, cfg, database.DB, authHandler, healthHandler, webhookHandler, moderationHandler, coordinateHandler, satelliteHandler, historyHandler, legalHandler, exportHandler)
 
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)

@@ -20,6 +20,7 @@ func Setup(
 	satelliteHandler *handlers.SatelliteHandler,
 	historyHandler *handlers.HistoryHandler,
 	legalHandler *handlers.LegalHandler,
+	exportHandler *handlers.ExportHandler,
 ) {
 	api := app.Group("/api")
 
@@ -62,6 +63,9 @@ func Setup(
 
 	// History (protected)
 	protected.Get("/history", historyHandler.GetHistory)
+
+	// Export (protected, premium only)
+	protected.Get("/export/csv", exportHandler.ExportCSV)
 
 	// Admin moderation panel (protected + admin role check)
 	admin := api.Group("/admin", middleware.JWTProtected(cfg), middleware.AdminRequired(db))

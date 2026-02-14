@@ -40,13 +40,13 @@
       "id": "enhance_004",
       "title": "Add CSV data export endpoint for premium users",
       "description": "Users need to export their environmental monitoring data. Add a CSV export endpoint gated behind subscription status.\n\nCreate file: backend/internal/services/export_service.go\n- type ExportService struct { db *gorm.DB }\n- func NewExportService(db *gorm.DB) *ExportService\n- func (s *ExportService) ExportUserDataCSV(userID uuid.UUID) ([]byte, error):\n  1. Query all coordinates for user with their satellite_data joined\n  2. Build CSV with headers: Location,Latitude,Longitude,Change Type,Confidence,Severity,Summary,Detected At\n  3. Use encoding/csv and bytes.Buffer to write CSV\n  4. Return buffer.Bytes()\n\nCreate file: backend/internal/handlers/export_handler.go\n- type ExportHandler struct { exportService *services.ExportService }\n- func NewExportHandler(exportService *services.ExportService) *ExportHandler\n- func (h *ExportHandler) ExportCSV(c *fiber.Ctx) error:\n  1. Extract userID from JWT\n  2. Call exportService.ExportUserDataCSV(userID)\n  3. Set headers: Content-Type: text/csv, Content-Disposition: attachment; filename=ecomonitor-export.csv\n  4. Return c.Send(csvBytes)\n\nModify file: backend/cmd/server/main.go\n- Add: exportService := services.NewExportService(database.DB)\n- Add: exportHandler := handlers.NewExportHandler(exportService)\n\nModify file: backend/internal/routes/routes.go\n- Add exportHandler parameter to Setup function\n- Add route: protected.Get(\"/export/csv\", exportHandler.ExportCSV)\n\nModify file: mobile/app/(protected)/settings.tsx\n- Add 'Export Data' row in the ACCOUNT section with icon 'download-outline'\n- OnPress: call api.get('/export/csv', { responseType: 'blob' }), then use Sharing.shareAsync from expo-sharing to share the file\n- Add import { shareAsync } from 'expo-sharing' (already in package.json via expo)",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 8,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": ""
+      "updated_at": "2026-02-14T19:18:46Z"
     },
     {
       "id": "enhance_005",
@@ -136,13 +136,13 @@
       "id": "enhance_012",
       "title": "Add admin middleware role check and fix security gap in moderation routes",
       "description": "The routes.go file (line 67) has a comment noting the admin moderation panel needs proper admin middleware. Currently middleware.AdminRequired exists but needs verification. The backend needs a proper role-based access control.\n\nModify file: backend/internal/models/user.go\n- Add Role field: Role string `gorm:\"type:varchar(20);default:'user'\" json:\"role\"` — values: 'user', 'admin'\n\nModify file: backend/internal/middleware/auth.go\n- Verify AdminRequired middleware exists and correctly checks user role from DB:\n  func AdminRequired(db *gorm.DB) fiber.Handler that:\n  1. Extracts userID from JWT claims (same as JWTProtected)\n  2. Queries User from DB: var user models.User; db.First(\u0026user, \"id = ?\", userID)\n  3. Checks user.Role == \"admin\"\n  4. If not admin, returns 403 Forbidden: {\"error\": true, \"message\": \"Admin access required\"}\n  5. Calls c.Next() if admin\n\nModify file: backend/internal/services/auth_service.go\n- In Register method, ensure new users get Role: \"user\" by default (GORM default handles this)\n- In the JWT token generation, include role in claims: claims[\"role\"] = user.Role\n\nModify file: backend/internal/dto/auth_dto.go\n- Add Role string `json:\"role\"` to LoginResponse and any user-facing response DTOs\n\nModify file: backend/internal/handlers/auth_handler.go\n- Include role in login/register response so mobile app can display admin badge if needed\n\nThis fixes the documented security gap where any authenticated user could access admin moderation endpoints.",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 9,
       "depends_on": [],
       "test_command": "cd backend \u0026\u0026 go build ./...",
       "auto_commit": true,
       "created_at": "",
-      "updated_at": "2026-02-14T19:09:55Z"
+      "updated_at": "2026-02-14T19:18:46Z"
     },
     {
       "id": "enhance_013",
