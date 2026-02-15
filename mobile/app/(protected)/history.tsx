@@ -54,14 +54,22 @@ export default function HistoryScreen() {
     }, [fetchHistory])
   );
 
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    setPage(1);
+    fetchHistory(1, true);
+  };
+
   const handleRefresh = () => {
     setRefreshing(true);
+    setError(null);
     setPage(1);
     fetchHistory(1, true);
   };
 
   const handleLoadMore = () => {
-    if (hasMore && !loading && !loadingMore) {
+    if (hasMore && !loading && !loadingMore && !error) {
       setLoadingMore(true);
       const nextPage = page + 1;
       setPage(nextPage);
@@ -135,11 +143,12 @@ export default function HistoryScreen() {
     );
   }
 
-  if (error) {
+  if (error && history.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-gray-950" edges={['top']}>
         <View className="px-6 pt-6 pb-4">
           <Text className="text-3xl font-bold text-white">Analysis History</Text>
+          <Text className="text-gray-400 mt-1">Your past environmental analyses</Text>
         </View>
         <View className="flex-1 justify-center items-center px-8">
           <Ionicons name="time-outline" size={64} color="#ef4444" />
@@ -148,15 +157,13 @@ export default function HistoryScreen() {
           <Pressable
             className="rounded-2xl px-8 py-3 mt-6"
             style={{ backgroundColor: '#10b981' }}
-            onPress={() => {
-              setError(null);
-              setLoading(true);
-              setPage(1);
-              fetchHistory(1, true);
-            }}
+            onPress={handleRetry}
           >
-            <Text className="text-white font-semibold">Retry</Text>
+            <Text className="text-white font-semibold text-base">Retry</Text>
           </Pressable>
+          <Text className="text-xs text-gray-500 mt-4 text-center">
+            Pull down to refresh or tap retry
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -168,6 +175,22 @@ export default function HistoryScreen() {
         <Text className="text-3xl font-bold text-white">History</Text>
         <Text className="text-sm text-gray-400 mt-1">Your analysis history</Text>
       </View>
+      {/* Inline error banner for refresh failures when history exists */}
+      {error && history.length > 0 && (
+        <View className="mx-6 mb-4 mt-4 bg-red-900/30 border border-red-500/50 rounded-2xl p-4 flex-row items-center">
+          <Ionicons name="alert-circle-outline" size={24} color="#ef4444" />
+          <View className="flex-1 ml-3">
+            <Text className="text-white font-medium">Refresh Failed</Text>
+            <Text className="text-gray-400 text-sm">Pull down to try again</Text>
+          </View>
+          <Pressable
+            className="bg-red-500/20 rounded-xl px-3 py-2"
+            onPress={handleRetry}
+          >
+            <Text className="text-red-400 font-medium text-sm">Retry</Text>
+          </Pressable>
+        </View>
+      )}
       <FlatList
         data={history}
         renderItem={renderItem}

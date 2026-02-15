@@ -290,8 +290,15 @@ export default function HomeScreen() {
     }, [])
   );
 
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    fetchData();
+  };
+
   const handleRefresh = () => {
     setRefreshing(true);
+    setError(null);
     fetchData();
   };
 
@@ -339,14 +346,13 @@ export default function HomeScreen() {
           <Pressable
             className="rounded-2xl px-8 py-3 mt-6"
             style={{ backgroundColor: '#10b981' }}
-            onPress={() => {
-              setError(null);
-              setLoading(true);
-              fetchData();
-            }}
+            onPress={handleRetry}
           >
-            <Text className="text-white font-semibold">Retry</Text>
+            <Text className="text-white font-semibold text-base">Retry</Text>
           </Pressable>
+          <Text className="text-xs text-gray-500 mt-4 text-center">
+            Check your internet connection and try again
+          </Text>
         </View>
       </SafeAreaView>
     );
