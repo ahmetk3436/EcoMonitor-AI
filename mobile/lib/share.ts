@@ -1,29 +1,77 @@
 import { Share } from 'react-native';
+import { hapticSuccess, hapticError } from './haptics';
 import type { SatelliteAlert } from '../types/satellite';
 
-export async function shareAlert(alert: SatelliteAlert): Promise<void> {
-  const changeLabel = alert.changeType.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-  const confidencePercent = Math.round(alert.confidence * 100);
-  const detectedDate = new Date(alert.detectedAt).toLocaleDateString();
+interface AlertDetailShareData {
+  id: string;
+  changeType: string;
+  confidence: string;
+  latitude: string;
+  longitude: string;
+  summary: string;
+  severity: string;
+  detectedAt: string;
+}
+
+export async function shareAlert(alert: SatelliteAlert | AlertDetailShareData): Promise<void> {
+  // Determine if this is a SatelliteAlert (has coordinates object) or AlertDetailShareData (has latitude/longitude strings)
+  const isSatelliteAlert = 'coordinates' in alert && typeof (alert as SatelliteAlert).coordinates === 'object';
+
+  let changeLabel: string;
+  let confidencePercent: string;
+  let locationStr: string;
+  let detectedDate: string;
+  let summaryText: string;
+  let severityText: string;
+
+  if (isSatelliteAlert) {
+    const sa = alert as SatelliteAlert;
+    changeLabel = sa.changeType.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    confidencePercent = String(Math.round(sa.confidence * 100));
+    locationStr = `${sa.coordinates.label} (${sa.coordinates.lat}, ${sa.coordinates.lng})`;
+    detectedDate = new Date(sa.detectedAt).toLocaleDateString();
+    summaryText = sa.summary;
+    severityText = sa.severity.toUpperCase();
+  } else {
+    const ad = alert as AlertDetailShareData;
+    changeLabel = ad.changeType
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    confidencePercent = ad.confidence;
+    locationStr = `${parseFloat(ad.latitude).toFixed(4)}, ${parseFloat(ad.longitude).toFixed(4)}`;
+    detectedDate = new Date(ad.detectedAt).toLocaleDateString();
+    summaryText = ad.summary;
+    severityText = ad.severity.toUpperCase();
+  }
 
   const message = `EcoMonitor AI Alert
 
-Change Type: ${changeLabel}
+Change Detected: ${changeLabel}
 Confidence: ${confidencePercent}%
-Location: ${alert.coordinates.label} (${alert.coordinates.lat}, ${alert.coordinates.lng})
+Severity: ${severityText}
+
+Location: ${locationStr}
+
+Summary:
+${summaryText}
+
 Detected: ${detectedDate}
 
-${alert.summary}
-
-Monitor environmental changes with EcoMonitor AI`;
+Download EcoMonitor AI to track environmental changes in real-time.`;
 
   try {
-    await Share.share({
+    const result = await Share.share({
       message,
-      title: 'EcoMonitor AI - Environmental Alert',
+      title: 'EcoMonitor Alert',
     });
-  } catch {
-    // User dismissed or share failed - ignore
+
+    if (result.action === Share.sharedAction) {
+      hapticSuccess();
+    }
+  } catch (error: any) {
+    hapticError();
+    console.error('Share failed:', error);
   }
 }
 
