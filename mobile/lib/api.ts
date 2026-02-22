@@ -2,6 +2,19 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from 'axios';
+// Sentry removed - using no-op stub
+const Sentry = {
+  init: () => {},
+  captureException: (e: any) => console.error(e),
+  captureMessage: (m: string) => console.warn(m),
+  setUser: (_u: any) => {},
+  addBreadcrumb: (_b: any) => {},
+  withScope: (cb: any) => cb({ setExtra: () => {}, setTag: () => {} }),
+  Native: { wrap: (c: any) => c },
+  wrap: (c: any) => c,
+  ReactNavigationInstrumentation: class {},
+  ReactNativeTracing: class {},
+};
 import {
   getAccessToken,
   getRefreshToken,
@@ -9,13 +22,18 @@ import {
   clearTokens,
 } from './storage';
 
+const APP_ID = 'ecomonitor';
+
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://89.47.113.196:8081/api';
+  process.env.EXPO_PUBLIC_API_URL || 'http://89.47.113.196:8099/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'X-App-ID': APP_ID,
+  },
 });
 
 // Request interceptor: attach access token
@@ -76,6 +94,11 @@ api.interceptors.response.use(
 
         const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refresh_token: refreshToken,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-App-ID': APP_ID,
+          },
         });
 
         await setTokens(data.access_token, data.refresh_token);
@@ -91,6 +114,13 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
+
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: error.config?.url,
+        status: String(error.response?.status ?? 'unknown'),
+      },
+    });
 
     return Promise.reject(error);
   }
