@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { hapticSelection, hapticSuccess, hapticError } from '../../lib/haptics';
@@ -53,7 +53,6 @@ const SEVERITY_DESCRIPTIONS: Record<string, string> = {
 };
 
 export default function AlertDetailScreen() {
-  const router = useRouter();
   const params = useLocalSearchParams<{
     id: string;
     coordinateId: string;

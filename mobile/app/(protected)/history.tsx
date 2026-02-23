@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 import api from '../../lib/api';
 import { hapticSelection, hapticError } from '../../lib/haptics';
+import { useAuth } from '../../contexts/AuthContext';
 import type { AnalysisHistory, PaginatedHistory } from '../../types/history';
 
 export default function HistoryScreen() {
-  const router = useRouter();
+  const { isGuest } = useAuth();
   const [history, setHistory] = useState<AnalysisHistory[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -175,6 +176,28 @@ export default function HistoryScreen() {
         <Text className="text-3xl font-bold text-white">History</Text>
         <Text className="text-sm text-gray-400 mt-1">Your analysis history</Text>
       </View>
+      {/* Guest Banner */}
+      {isGuest && (
+        <Pressable
+          className="mx-4 mt-4 rounded-2xl p-4 flex-row items-center border-2"
+          style={{
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderColor: 'rgba(16, 185, 129, 0.3)',
+          }}
+          onPress={() => router.push('/(auth)/register')}
+        >
+          <Ionicons name="information-circle" size={24} color="#10b981" />
+          <Text className="flex-1 text-emerald-400 ml-3 text-sm">
+            Create an account to save your analysis history
+          </Text>
+          <View
+            className="px-3 py-1.5 rounded-full"
+            style={{ backgroundColor: '#10b981' }}
+          >
+            <Text className="text-white font-semibold text-xs">Sign Up</Text>
+          </View>
+        </Pressable>
+      )}
       {/* Inline error banner for refresh failures when history exists */}
       {error && history.length > 0 && (
         <View className="mx-6 mb-4 mt-4 bg-red-900/30 border border-red-500/50 rounded-2xl p-4 flex-row items-center">

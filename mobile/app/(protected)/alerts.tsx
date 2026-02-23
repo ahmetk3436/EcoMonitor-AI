@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 import api from '../../lib/api';
 import { hapticSuccess, hapticError, hapticLight, hapticSelection } from '../../lib/haptics';
 import { useSubscription } from '../../contexts/SubscriptionContext';
@@ -97,7 +97,6 @@ const getConfidenceColor = (confidence: number) => {
 export default function AlertsScreen() {
   const { isSubscribed } = useSubscription();
   const { isGuest, canUseFeature, incrementGuestUsage } = useAuth();
-  const router = useRouter();
   const [alerts, setAlerts] = useState<SatelliteAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

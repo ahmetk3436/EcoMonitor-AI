@@ -5,6 +5,7 @@ import Purchases, {
 } from 'react-native-purchases';
 
 const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_KEY;
+let isConfigured = false;
 
 export type { PurchasesPackage, PurchasesOffering };
 
@@ -13,23 +14,24 @@ export const initializePurchases = async () => {
     if (API_KEY) {
       Purchases.setLogLevel(LOG_LEVEL.DEBUG);
       Purchases.configure({ apiKey: API_KEY });
+      isConfigured = true;
       console.log('RevenueCat initialized successfully');
     } else {
       console.warn('RevenueCat API key not configured - skipping initialization');
     }
   } catch (error) {
+    isConfigured = false;
     console.error('Failed to initialize RevenueCat:', error);
   }
 };
 
 export const getOfferings = async (): Promise<PurchasesOffering | null> => {
   try {
-    if (!API_KEY) return null;
+    if (!isConfigured) return null;
     const offerings = await Purchases.getOfferings();
     return offerings.current;
   } catch (error) {
-    // Only log if initialized
-    if (API_KEY) console.error('Failed to fetch offerings:', error);
+    if (isConfigured) console.error('Failed to fetch offerings:', error);
     return null;
   }
 };
@@ -38,7 +40,7 @@ export const purchasePackage = async (
   pkg: PurchasesPackage,
 ): Promise<boolean> => {
   try {
-    if (!API_KEY) return false;
+    if (!isConfigured) return false;
     const { customerInfo } = await Purchases.purchasePackage(pkg);
     return customerInfo.entitlements.active.pro !== undefined;
   } catch (error: any) {
@@ -51,7 +53,7 @@ export const purchasePackage = async (
 
 export const restorePurchases = async (): Promise<boolean> => {
   try {
-    if (!API_KEY) return false;
+    if (!isConfigured) return false;
     const customerInfo = await Purchases.restorePurchases();
     return customerInfo.entitlements.active.pro !== undefined;
   } catch (error) {
@@ -62,12 +64,11 @@ export const restorePurchases = async (): Promise<boolean> => {
 
 export const checkSubscriptionStatus = async (): Promise<boolean> => {
   try {
-    if (!API_KEY) return false;
+    if (!isConfigured) return false;
     const customerInfo = await Purchases.getCustomerInfo();
     return customerInfo.entitlements.active.pro !== undefined;
   } catch (error) {
-    // Only log if initialized
-    if (API_KEY) console.error('Failed to check subscription status:', error);
+    if (isConfigured) console.error('Failed to check subscription status:', error);
     return false;
   }
 };

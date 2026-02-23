@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { View, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, ScrollView } from 'react-native';
+import { Link, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../contexts/AuthContext';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import AppleSignInButton from '../../components/ui/AppleSignInButton';
 
 export default function LoginScreen() {
   const { login, continueAsGuest } = useAuth();
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,6 +21,7 @@ export default function LoginScreen() {
     setIsLoading(true);
     try {
       await login(email, password);
+      router.replace('/(protected)/home');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
@@ -83,31 +81,40 @@ export default function LoginScreen() {
 
           {/* Input Fields */}
           <View className="mb-4">
-            <Input
-              label="Email"
-              placeholder="you@example.com"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              leftIcon="mail-outline"
-              autoComplete="email"
-            />
+            <Text className="text-sm font-semibold text-gray-300 mb-1.5">Email</Text>
+            <View
+              className="flex-row items-center rounded-2xl border-2 border-gray-800 bg-gray-900 overflow-hidden"
+            >
+              <TextInput
+                className="flex-1 text-base text-white px-4 py-3.5"
+                placeholder="you@example.com"
+                placeholderTextColor="#6b7280"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                autoComplete="email"
+              />
+            </View>
           </View>
 
           <View className="mb-6">
-            <Input
-              label="Password"
-              placeholder="Your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              showPasswordToggle
-              textContentType="password"
-              leftIcon="lock-closed-outline"
-              autoComplete="password"
-            />
+            <Text className="text-sm font-semibold text-gray-300 mb-1.5">Password</Text>
+            <View
+              className="flex-row items-center rounded-2xl border-2 border-gray-800 bg-gray-900 overflow-hidden"
+            >
+              <TextInput
+                className="flex-1 text-base text-white px-4 py-3.5"
+                placeholder="Your password"
+                placeholderTextColor="#6b7280"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                textContentType="password"
+                autoComplete="password"
+              />
+            </View>
           </View>
 
           {/* Sign In Button with Gradient */}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SupportTicketModal from '../../components/ui/SupportTicketModal';
 import {
   View,
   Text,
@@ -81,6 +82,7 @@ export default function SettingsScreen() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
 
   useEffect(() => {
     checkBiometrics();
@@ -420,6 +422,22 @@ export default function SettingsScreen() {
           />
         </View>
 
+        {/* Support */}
+        <View className="px-6 pt-4 pb-2">
+          <Text className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            SUPPORT
+          </Text>
+        </View>
+        <View className="mx-4 rounded-2xl mb-3" style={{ backgroundColor: '#111827', borderWidth: 1, borderColor: '#1f2937' }}>
+          <SettingRow
+            icon="chatbubble-ellipses-outline"
+            iconColor="#6366f1"
+            label="Contact Support"
+            sublabel="Get help with any issues"
+            onPress={() => setShowSupport(true)}
+          />
+        </View>
+
         {/* Legal Section */}
         <View className="px-6 pt-4 pb-2">
           <Text className="text-xs font-semibold uppercase tracking-wider text-gray-500">
@@ -472,6 +490,8 @@ export default function SettingsScreen() {
           <Text className="text-xs text-gray-600 mt-1">Made with care for the planet</Text>
         </View>
       </ScrollView>
+
+      <SupportTicketModal visible={showSupport} onClose={() => setShowSupport(false)} appId="ecomonitor" userEmail={user?.email} />
 
       <Modal visible={showDeleteModal} onClose={() => setShowDeleteModal(false)} title="Confirm Deletion">
         <Text className="mb-4 text-sm text-gray-400">

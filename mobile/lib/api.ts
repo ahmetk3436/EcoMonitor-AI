@@ -27,6 +27,13 @@ const APP_ID = 'ecomonitor';
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || 'http://89.47.113.196:8099/api';
 
+// Auth expiration callback - set by AuthContext to synchronize state
+let authExpiredCallback: (() => void) | null = null;
+
+export function setAuthExpiredCallback(callback: (() => void) | null): void {
+  authExpiredCallback = callback;
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
@@ -109,6 +116,9 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         await clearTokens();
+        if (authExpiredCallback) {
+          authExpiredCallback();
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
@@ -135,6 +145,15 @@ export default api;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const _CACHED_URL_KEY = '@fams_api_base_url';
+
+const authApi = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-App-ID': APP_ID,
+  },
+});
 
 // Restore cached URL immediately (runs async; first requests use hardcoded URL)
 AsyncStorage.getItem(_CACHED_URL_KEY).then((cached) => {

@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -232,7 +232,6 @@ function GradientStreakCard({ streakData, onPress }: { streakData: StreakData; o
 export default function HomeScreen() {
   const { user, isGuest, guestUsageCount } = useAuth();
   const { isSubscribed } = useSubscription();
-  const router = useRouter();
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [coordinates, setCoordinates] = useState<CoordItem[]>([]);
   const [loading, setLoading] = useState(true);

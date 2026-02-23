@@ -1,8 +1,21 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../lib/api';
+import api, { setAuthExpiredCallback } from '../lib/api';
 import { setTokens, clearTokens, getAccessToken, getRefreshToken } from '../lib/storage';
 import { hapticSuccess, hapticError } from '../lib/haptics';
+// Sentry removed - using no-op stub
+const Sentry = {
+  init: () => {},
+  captureException: (e: any) => console.error(e),
+  captureMessage: (m: string) => console.warn(m),
+  setUser: (_u: any) => {},
+  addBreadcrumb: (_b: any) => {},
+  withScope: (cb: any) => cb({ setExtra: () => {}, setTag: () => {} }),
+  Native: { wrap: (c: any) => c },
+  wrap: (c: any) => c,
+  ReactNavigationInstrumentation: class {},
+  ReactNativeTracing: class {},
+};
 import type { User, AuthResponse } from '../types/auth';
 
 const GUEST_USAGE_KEY = 'ecomonitor_guest_usage';
@@ -35,11 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const token = await getAccessToken();
         if (token) {
-          const { data } = await api.get('/health');
-          if (data.status === 'ok') {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            setUser({ id: payload.sub, email: payload.email });
-          }
+          const { data } = await api.get('/auth/me');
+          setUser(data.user || data);
         } else {
           const guestMode = await AsyncStorage.getItem(GUEST_MODE_KEY);
           if (guestMode === 'true') {
@@ -58,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data } = await api.post<AuthResponse>('/auth/login', { email, password });
       await setTokens(data.access_token, data.refresh_token);
-      setUser(data.user); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
+      setUser(data.user); Sentry.setUser({ id: data.user.id, email: data.user.email }); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
     } catch (err) { hapticError(); throw err; }
   }, []);
 
@@ -66,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data } = await api.post<AuthResponse>('/auth/register', { email, password });
       await setTokens(data.access_token, data.refresh_token);
-      setUser(data.user); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
+      setUser(data.user); Sentry.setUser({ id: data.user.id, email: data.user.email }); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
     } catch (err) { hapticError(); throw err; }
   }, []);
 
@@ -74,14 +84,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data } = await api.post<AuthResponse>('/auth/apple', { identity_token: identityToken, authorization_code: authCode, full_name: fullName, email });
       await setTokens(data.access_token, data.refresh_token);
-      setUser(data.user); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
+      setUser(data.user); Sentry.setUser({ id: data.user.id, email: data.user.email }); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); hapticSuccess();
     } catch (err) { hapticError(); throw err; }
   }, []);
 
   const logout = useCallback(async () => {
     try { const rt = await getRefreshToken(); if (rt) await api.post('/auth/logout', { refresh_token: rt }); } catch {}
-    finally { await clearTokens(); setUser(null); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); }
+    finally { await clearTokens(); setUser(null); Sentry.setUser(null); setIsGuest(false); await AsyncStorage.removeItem(GUEST_MODE_KEY); }
   }, []);
+
+  useEffect(() => {
+    setAuthExpiredCallback(logout);
+    return () => setAuthExpiredCallback(null);
+  }, [logout]);
 
   const deleteAccount = useCallback(async (password?: string) => {
     await api.delete('/auth/account', { data: { password: password || '' } });

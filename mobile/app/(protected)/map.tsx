@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,11 +22,11 @@ import {
   hapticSuccess,
   hapticError,
 } from '../../lib/haptics';
+import { useAuth } from '../../contexts/AuthContext';
 import { Coordinate } from '../../types/coordinate';
 
 export default function MapScreen() {
-  const router = useRouter();
-
+  const { isGuest, canUseFeature, incrementGuestUsage } = useAuth();
   const [coordinates, setCoordinates] = useState<Coordinate[]>([]);
   const [selectedCoordinate, setSelectedCoordinate] = useState<Coordinate | null>(null);
   const [isAddMode, setIsAddMode] = useState(false);
@@ -88,6 +88,18 @@ export default function MapScreen() {
       return;
     }
 
+    if (isGuest && !canUseFeature()) {
+      Alert.alert(
+        'Free Limit Reached',
+        'Create an account to add more locations.',
+        [
+          { text: 'Sign Up', onPress: () => router.push('/(auth)/register') },
+          { text: 'Cancel', style: 'cancel' },
+        ]
+      );
+      return;
+    }
+
     setIsSaving(true);
     hapticLight();
 
@@ -99,6 +111,9 @@ export default function MapScreen() {
         longitude: newCoordinate.longitude,
       });
 
+      if (isGuest) {
+        await incrementGuestUsage();
+      }
       hapticSuccess();
       bottomSheetRef.current?.close();
       setLabel('');
@@ -141,6 +156,18 @@ export default function MapScreen() {
 
   const handleAnalyzeCoordinate = async () => {
     if (!selectedCoordinate) return;
+
+    if (isGuest && !canUseFeature()) {
+      Alert.alert(
+        'Free Limit Reached',
+        'Create an account to continue analyzing locations.',
+        [
+          { text: 'Sign Up', onPress: () => router.push('/(auth)/register') },
+          { text: 'Cancel', style: 'cancel' },
+        ]
+      );
+      return;
+    }
 
     setIsAnalyzing(true);
     hapticLight();

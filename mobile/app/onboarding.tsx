@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { hapticLight } from '../lib/haptics';
 import { cn } from '../lib/cn';
@@ -18,7 +18,6 @@ import { cn } from '../lib/cn';
 const ONBOARDING_KEY = 'onboarding_complete';
 
 export default function OnboardingScreen() {
-  const router = useRouter();
   const { width } = useWindowDimensions();
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
